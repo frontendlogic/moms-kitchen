@@ -63,15 +63,6 @@ python manage.py runserver
 
 http://127.0.0.1:8000/
 
-## 📸 Screenshots
-
-Add screenshots of:
-
-* Home Page
-* Recipe List Page
-* Login Page
-* User Dashboard
-* AI Recipe Generator
 
 ## 👩‍💻 Author
 
