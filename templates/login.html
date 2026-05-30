@@ -1,0 +1,383 @@
+ {% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+     <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<style>
+    body {
+    font-family: 'Arial', sans-serif;
+    background-color:#734e7c;
+}
+
+
+.form-container {
+    max-width: 400px;
+    margin: 60px auto;
+    background-color:#c7ecc7; /* Light green to match navbar */
+    padding: 55px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #442c4b;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color:#734e7c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #442c4b;
+}
+
+p
+{
+    color: #000000;
+    text-align: center;
+    margin-top: 15px;
+}
+a{
+    color: #442c4b;
+}
+.form-container {
+       
+    max-width: 400px;
+    margin: 60px auto;
+    background-color: #e6f2e6; /* Light green to match navbar */
+    padding: 63px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #442c4b;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    
+    width: 50%;
+    padding: 10px;
+    background-color:#734e7c;
+    color: white;
+    font-weight: normal;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: rgb(115, 201, 128);
+    color:#442c4b;
+}
+
+p {
+    text-align: center;
+    color: #050505;
+    margin-top: 15px;
+}
+a{
+    color: #442c4b;
+}
+
+/*Header*/
+/* Header and Navigation */
+.header
+{
+    color: #333;
+    padding: 1rem 0;
+    border-bottom: 2px solid #ddd;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    margin: auto;
+}
+
+nav ul 
+{
+    list-style: none;
+    display: flex;
+}
+
+
+nav ul li a {
+    text-decoration: none;
+    color:  #012503;
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color: #0e4411;
+    border-bottom: 2px solid #0a500d;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color:  #0a500d;
+    border-bottom: 2px solid #0a500d;;
+}
+
+.carousel-item img {
+    height: 500px;
+    object-fit: cover;
+}
+/* ---- Logo Styling ---- */
+.logo 
+{
+    height: 341px !important;
+    width: auto;
+    
+}
+
+/* ---- Navigation Links Styling ---- */
+.nav-links {
+    list-style: none; /* Removes the bullet points from the list */
+    display: flex; /* Arranges the list items horizontally */
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-left: 30px; /* Adds space between each navigation link */
+}
+
+.nav-links a {
+    text-decoration: none; /* Removes the underline from the links */
+    color: white; /* Changes the link color */
+    font-size: 18px; /* Adjusts font size for better readability */
+    font-weight: bold;
+}
+
+ /* Background slider */
+.background-slider {
+ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.3s ease-in-out;
+}
+
+body::after {
+    content: ''; /* Required for pseudo-elements */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+     background-color: rgb(82, 82, 81);
+     height: 800px;
+    opacity: 0.5; /* The transparency */
+    z-index: -1; /* Puts the overlay BEHIND the content but ON TOP of the background image */
+}
+.bg-slide.active {
+      background-size: cover;
+    background-position: center;
+     background-color: rgb(82, 82, 81);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /* Use the filter property to adjust brightness */
+    filter: brightness(1.1); /* 1.0 is original, > 1.0 is brighter */
+    opacity: 1;
+}
+
+/*ICons */
+ul li a i {
+  font-size: 18px;
+    margin-right: 6px;   /* space between icon and text */
+}
+ul li a.active i {
+  color: #0f361f;      /* highlight active icon */
+}
+
+/*Login_Forgot Password*/
+.form-container {
+            max-width: 400px;
+            margin: 60px auto;
+            background-color: #e6f2e6;
+            padding: 63px;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+
+        .form-container h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #442c4b;
+        }
+
+        input {
+            width: 93%;
+            padding: 10px;
+            margin: 8px 0;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+        }
+
+        .btn-group {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+        }
+
+        button, .btn-link {
+            flex: 1;
+            padding: 10px;
+            background-color:#734e7c;
+            color: white;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        button:hover, .btn-link:hover {
+            background-color: rgb(115, 201, 128);
+            color:#442c4b;
+        }
+
+
+</style>
+<body>
+
+    {% load static %}
+    <div class="background-slider">
+    <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+    <img src= "{% static 'image/p2.jpg' %}" class="bg-slide  ">
+    <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+
+</div>
+
+    <header>
+     <nav class="navbar">
+       <a href="{% url 'index' %}" class="logo-link">
+                <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+            </a>
+                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <ul>
+            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"> <i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}"><i class="fas fa-envelope"></i> Contact</a></li>
+            <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+            {% if user_id %}
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i> Register</a></li>
+            {% endif %}
+    </nav>
+</header>
+
+
+<div class="form-container">
+  <h2>Login</h2>
+  <p class="helper-text">New to Mom's Kitchen? <a href="{% url 'registration' %}">Create your account here</a> before signing in.</p>
+                {% include 'partials/messages.html' %}
+<form method="post">
+   {% csrf_token %}
+  <input type="text" name="user_name" placeholder="Username">
+  <input type="password" name="password" placeholder="Password">
+<div class="btn-group">
+           <!--a href="{% url 'index' %}"><button type="submit">Login</button></a-->
+           <!--a href="{% url 'index' %}" class="btn-link">Login</a=-->
+           <button type="submit">Login</button>
+            <a href="{% url 'forgot_password' %}" class="btn-link">Forgot Password</a>
+
+        </div>
+</form>
+</div>
+ 
+  <!--Footer -->
+        <footer class="footer">
+  <div class="footer-container">
+    <div class="footer-logo">
+      <h2>MoM's Kitchen</h2>
+      <h4>Delicious food made with love ❤️</h4>
+    </div>
+    <div class="footer-links">
+      <h4>Quick Links</h4>
+      <ul>
+        <li><a href="{% url 'index' %}"><i class="fa-solid fa-house" style="margin-left: 260px;"></i> Home</a></li>
+        <li><a href="{% url 'about' %}"><i class="fa-solid fa-circle-info"></i> About</a></li>
+        <li><a href="{% url 'contact' %}"><i class="fa-solid fa-envelope"></i> Contact</a></li>
+        <li><a href="{% url 'registration' %}"><i class="fa-solid fa-user-plus"></i> Registration</a></li>
+      </ul>
+    </div>
+    <div class="footer-social">
+      <h4>Follow Us</h4>
+      <a href="#"><i class="fa-brands fa-facebook"></i></a>
+      <a href="#"><i class="fa-brands fa-instagram"></i></a>
+      <a href="#"><i class="fa-brands fa-twitter"></i></a>
+      <a href="#"><i class="fa-brands fa-youtube"></i></a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p style="background-color: #333;">© 2025 Mom's Kitchen. All Rights Reserved.</p>
+  </div>
+</footer>
+</body>
+
+    {% if messages %}
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    var modal = new bootstrap.Modal(document.getElementById('registerSuccessModal'));
+    modal.show();
+  });
+</script>
+{% endif %}
+
+</body>
+</html>

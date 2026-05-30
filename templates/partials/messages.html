@@ -1,0 +1,33 @@
+{% if messages %}
+<div class="mk-flash-container" role="region" aria-label="Notifications">
+  {% for message in messages %}
+    <div class="mk-alert {% if 'error' in message.tags %}mk-alert-error{% elif 'warning' in message.tags %}mk-alert-warning{% elif 'success' in message.tags %}mk-alert-success{% else %}mk-alert-info{% endif %}" data-auto-dismiss="true">
+      <span class="mk-alert-icon">
+        {% if 'error' in message.tags %}&#9888;{% elif 'warning' in message.tags %}&#9888;{% elif 'success' in message.tags %}&#10003;{% else %}&#9432;{% endif %}
+      </span>
+      <span class="mk-alert-text">{{ message }}</span>
+      <button type="button" class="mk-alert-close" aria-label="Close">&times;</button>
+    </div>
+  {% endfor %}
+</div>
+<script>
+(function() {
+  const container = document.querySelector('.mk-flash-container');
+  if (!container) return;
+  container.addEventListener('click', function(e) {
+    if (e.target.classList.contains('mk-alert-close')) {
+      const alert = e.target.closest('.mk-alert');
+      if (alert) alert.classList.add('mk-hide');
+      setTimeout(() => alert && alert.remove(), 500);
+    }
+  });
+  document.querySelectorAll('.mk-alert[data-auto-dismiss="true"]').forEach(function(el) {
+    setTimeout(function(){ 
+      el.classList.add('mk-hide'); 
+      setTimeout(()=> el.remove(), 250);
+    }, 4000);
+  });
+})();
+</script>
+{% endif %}
+

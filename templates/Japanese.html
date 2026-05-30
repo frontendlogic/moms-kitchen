@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Japanese Cuisine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fefaf6;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #2c3e50;
+      text-align: left;
+      margin: 20px;
+    }
+
+    .menu-icon {
+      font-size: 28px;
+      cursor: pointer;
+      color: #2c3e50;
+      margin-left: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      width: 400px;
+      max-width: 90%;
+      text-align: center;
+      position: relative;
+    }
+
+    .close-x {
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      font-size: 22px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #2c3e50;
+    }
+
+    .modal-content label {
+      display: block;
+      margin: 8px 0;
+      padding: 10px;
+      border-radius: 8px;
+      background: #f4f6f7;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .modal-content label:hover {
+      background: #d6eaf8;
+    }
+
+    .close-btn {
+      background: #2980b9;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .dishes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .dish {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.2s;
+    }
+
+    .dish:hover {
+      transform: scale(1.03);
+      cursor: pointer;
+    }
+
+    .dish img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .dish h3 {
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+
+    #dishModal img, #dishModal video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    /* Like Button */
+    .like-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 20px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: transform 0.2s;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .like-count {
+      color: #2c3e50;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+
+  </style>
+</head>
+<body>
+
+  <h1>🍣 Japanese Cuisine</h1>
+  <span class="menu-icon" onclick="openMenu()">☰ Menu</span>
+
+  <!-- Menu Modal -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content">
+      <h2>Select Category</h2>
+      <label><input type="radio" name="cuisine" value="all" checked> All</label>
+      <label><input type="radio" name="cuisine" value="sushi"> Sushi</label>
+      <label><input type="radio" name="cuisine" value="ramen"> Ramen</label>
+      <label><input type="radio" name="cuisine" value="tempura"> Tempura</label>
+      <label><input type="radio" name="cuisine" value="street"> Street Food</label>
+      <button class="close-btn" onclick="closeMenu()">Close</button>
+    </div>
+  </div>
+
+  <!-- Dish Modal -->
+  <div id="dishModal" class="modal">
+    <div class="modal-content">
+      <span class="close-x" onclick="closeDishModal()">&times;</span>
+      <h2 id="dishTitle"></h2>
+      <img id="dishImage" src="" alt="">
+      <p id="dishDescription"></p>
+      <video id="dishVideo" controls></video>
+      <button class="like-btn" id="likeBtn" onclick="likeDish()">❤️ Like</button>
+      <p class="like-count" id="likeCount">Likes: 0</p>
+<p class="view-count" id="viewCount">Views: 0</p>
+<button class="like-btn" style="color:#3498db;" id="shareBtn" onclick="shareDish()">🔗 Share</button>
+
+    </div>
+  </div>
+
+  <!-- Dishes -->
+  <div class="dishes">
+    <div class="dish sushi" onclick="openDishModal('Sushi', 'A traditional Japanese dish with vinegared rice and seafood.', 'https://via.placeholder.com/400x250?text=Sushi', 'https://www.w3schools.com/html/mov_bbb.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Sushi"><h3>Sushi</h3>
+    </div>
+    <div class="dish ramen" onclick="openDishModal('Tonkotsu Ramen', 'Rich pork bone broth ramen, creamy and flavorful.', 'https://via.placeholder.com/400x250?text=Tonkotsu+Ramen', 'https://www.w3schools.com/html/movie.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Tonkotsu+Ramen"><h3>Tonkotsu Ramen</h3>
+    </div>
+    <div class="dish tempura" onclick="openDishModal('Tempura', 'Lightly battered and fried seafood and vegetables.', 'https://via.placeholder.com/400x250?text=Tempura', 'https://www.w3schools.com/html/mov_bbb.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Tempura"><h3>Tempura</h3>
+    </div>
+    <div class="dish street" onclick="openDishModal('Takoyaki', 'Round fried batter balls filled with octopus and topped with sauce.', 'https://via.placeholder.com/400x250?text=Takoyaki', 'https://www.w3schools.com/html/movie.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Takoyaki"><h3>Takoyaki</h3>
+    </div>
+  </div>
+
+<script>
+// Menu modal
+function openMenu() {
+  document.getElementById("menuModal").style.display = "flex";
+}
+function closeMenu() {
+  document.getElementById("menuModal").style.display = "none";
+}
+
+// Store likes and views per dish
+let dishLikes = {};
+let dishViews = {};
+
+// Open dish modal
+function openDishModal(title, description, image, video) {
+  document.getElementById("dishTitle").textContent = title;
+  document.getElementById("dishDescription").textContent = description;
+  document.getElementById("dishImage").src = image;
+  document.getElementById("dishVideo").src = video;
+  document.getElementById("dishModal").style.display = "flex";
+
+  // Initialize likes and views if not exist
+  if (!dishLikes[title]) dishLikes[title] = 0;
+  if (!dishViews[title]) dishViews[title] = 0;
+
+  // Increment view count
+  dishViews[title]++;
+
+  // Update like and view displays
+  document.getElementById("likeCount").textContent = "Likes: " + dishLikes[title];
+  document.getElementById("viewCount").textContent = "Views: " + dishViews[title];
+
+  // Store current dish for like/share
+  document.getElementById("likeBtn").setAttribute("data-dish", title);
+  document.getElementById("shareBtn").setAttribute("data-dish", title);
+}
+
+// Close dish modal
+function closeDishModal() {
+  document.getElementById("dishModal").style.display = "none";
+  document.getElementById("dishVideo").pause();
+}
+
+// Like button logic
+function likeDish() {
+  const title = document.getElementById("likeBtn").getAttribute("data-dish");
+  dishLikes[title]++;
+  document.getElementById("likeCount").textContent = "Likes: " + dishLikes[title];
+}
+
+// Share button logic
+function shareDish() {
+  const title = document.getElementById("shareBtn").getAttribute("data-dish");
+  const description = document.getElementById("dishDescription").textContent;
+  const url = window.location.href;
+  const shareText = `${title}\n${description}\n${url}`;
+
+  if (navigator.share) {
+    // Native mobile share
+    navigator.share({
+      title: title,
+      text: description,
+      url: url
+    }).then(() => console.log("Shared successfully"))
+      .catch(err => console.log("Error sharing:", err));
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareText)
+      .then(() => alert("Dish info copied to clipboard!"))
+      .catch(() => alert("Failed to copy. Please copy manually."));
+  }
+}
+
+// Filter logic
+const radios = document.querySelectorAll('input[name="cuisine"]');
+const dishes = document.querySelectorAll('.dish');
+
+radios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const cuisine = radio.value;
+    dishes.forEach(dish => {
+      dish.style.display = cuisine === 'all' || dish.classList.contains(cuisine) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

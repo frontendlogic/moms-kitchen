@@ -1,0 +1,101 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Website - About</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<style>
+  html, body { height: 100%; }
+  body {
+    margin: 0px;
+    padding: 0px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  main { flex: 1; }
+</style>
+  
+<body>
+    <!-- 🌄 Background Image Slider -->
+<div class="background-slider">
+    <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+    <img src= "{% static 'image/p2.jpg' %}" class="bg-slide">
+    <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+    <div class="background-overlay"></div>
+</div>
+
+    <header> <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo-link">
+                <img src="{% static 'image/Logo.png' %}" alt="Food Website Logo" class="logo">
+            </a>
+       
+              <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <ul>
+            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"> <i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}"><i class="fas fa-envelope"></i> Contact</a></li>
+            <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+            {% if user_id %}
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            {% endif %}
+          </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section class="about-content">
+            <h1>About Us</h1>
+            <p>Welcome to Mom’s Kitchen – a place where every recipe is filled with love, care, and the warmth of home. Inspired by the comfort of homemade meals, we created Mom’s Kitchen to bring the taste of tradition and family closer to you.
+
+Here, food is more than just cooking — it’s a way of sharing stories, memories, and the timeless bond between a mother and her family. From traditional favorites to modern twists, each recipe is made to be simple, nourishing, and full of flavor.
+
+At Mom’s Kitchen, we believe in:
+
+Using fresh and wholesome ingredients
+
+Preserving the magic of traditional cooking
+
+Creating meals that bring families together
+
+Whether you’re here to explore, cook, or simply enjoy, we’re happy to have you in our kitchen. Because nothing tastes better than food made with love. 💖</p>
+  <!-- Values Section -->
+  <div class="section">
+    <h2 style="color: #555;padding: 3px;margin: 50px;">Our Values</h2>
+    <div class="values">
+      <div class="value-box">
+        <h3>🥦 Fresh</h3>
+        <p>Only the best and freshest ingredients go into our meals.</p>
+      </div>
+      <div class="value-box">
+        <h3>🍲 Homely</h3>
+        <p>Every recipe feels like it’s made in mom’s kitchen, full of care.</p>
+      </div>
+      <div class="value-box">
+        <h3>💖 Love</h3>
+        <p>Because nothing tastes better than food cooked with love.</p>
+      </div>
+    </div>
+</div>
+ 
+
+  <!-- CTA -->
+  <div class="cta">
+    <a href="{%url 'upload'%}">See Our Recipes →</a>
+  </div>
+        </section>
+    </main>
+
+     <!--Footer -->
+{% include 'partials/footer.html' %}
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,448 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ recipe.title }} - MoM's Kitchen</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .recipe-detail-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .recipe-detail-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+        }
+
+        .recipe-header {
+            background: linear-gradient(135deg, #0a500d 0%, #27ae60 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .recipe-header h1 {
+            margin: 0 0 15px 0;
+            font-size: 36px;
+            font-weight: bold;
+        }
+
+        .recipe-meta-info {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+            font-size: 14px;
+        }
+
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .recipe-content {
+            padding: 40px;
+        }
+
+        .media-section {
+            margin-bottom: 40px;
+        }
+
+        .media-section h2 {
+            color: #0a500d;
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #27ae60;
+        }
+
+        .recipe-photo {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .recipe-video {
+            width: 100%;
+            max-width: 800px;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            display: block;
+        }
+
+        .ingredients-section, .instructions-section {
+            margin-bottom: 40px;
+        }
+
+        .ingredients-section h2, .instructions-section h2 {
+            color: #0a500d;
+            font-size: 28px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #27ae60;
+        }
+
+        .ingredients-content, .instructions-content {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            line-height: 1.8;
+            font-size: 16px;
+            color: #333;
+            white-space: pre-wrap;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+            padding-top: 30px;
+            border-top: 2px solid #eee;
+        }
+
+        .action-btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 16px;
+            text-decoration: none;
+        }
+
+        .like-btn {
+            background: #f8f9fa;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+        }
+
+        .like-btn:hover {
+            background: #c0392b;
+            color: white;
+        }
+
+        .like-btn.liked {
+            background: #c0392b;
+            color: white;
+        }
+
+        .back-btn {
+            background: #6c757d;
+            color: white;
+        }
+
+        .back-btn:hover {
+            background: #5a6268;
+        }
+
+        .share-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .share-btn:hover {
+            background: #2980b9;
+        }
+
+        .like-count {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .description-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f0f6f0;
+            border-radius: 12px;
+            border-left: 4px solid #27ae60;
+        }
+
+        .description-section h2 {
+            color: #0a500d;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .description-content {
+            color: #555;
+            font-size: 16px;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .recipe-header h1 {
+                font-size: 24px;
+            }
+
+            .recipe-content {
+                padding: 20px;
+            }
+
+            .recipe-meta-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .recipe-actions {
+                flex-direction: column;
+            }
+
+            .action-btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-slider">
+        <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+        <img src="{% static 'image/p2.jpg' %}" class="bg-slide">
+        <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+        <div class="background-overlay"></div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <a href="{% url 'index' %}" class="logo-link">
+                <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+            </a>
+            <ul>
+                <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+                {% if user_id %}
+                    <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+                    <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="recipe-detail-container">
+        <div class="recipe-detail-card">
+            <div class="recipe-header">
+                <h1>{{ recipe.title }}</h1>
+                <div class="recipe-meta-info">
+                    <div class="meta-item">
+                        <i class="fas fa-utensils"></i>
+                        <span><strong>Cuisine:</strong> {{ recipe.cuisine }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tag"></i>
+                        <span><strong>Sub-Cuisine:</strong> {{ recipe.subcuisine }}</span>
+                    </div>
+                    {% if recipe.region %}
+                    <div class="meta-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span><strong>Region:</strong> {{ recipe.region }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="meta-item">
+                        <i class="fas fa-user"></i>
+                        <span><strong>By:</strong> {{ recipe.user.user_name }}</span>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar"></i>
+                        <span><strong>Date:</strong> {{ recipe.created_at|date:"M d, Y" }}</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="recipe-content">
+                {% if recipe.description %}
+                <div class="description-section">
+                    <h2><i class="fas fa-info-circle"></i> Description</h2>
+                    <div class="description-content">{{ recipe.description }}</div>
+                </div>
+                {% endif %}
+
+                <!-- Media Section: Photos and Video -->
+                <div class="media-section">
+                    <h2><i class="fas fa-images"></i> Photos & Video</h2>
+                    
+                    {% if recipe.photo %}
+                    <div style="margin-bottom: 30px;">
+                        <h3 style="color: #0a500d; margin-bottom: 15px;"><i class="fas fa-camera"></i> Photo</h3>
+                        <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}" class="recipe-photo">
+                    </div>
+                    {% endif %}
+
+                    {% if recipe.video %}
+                    <div>
+                        <h3 style="color: #0a500d; margin-bottom: 15px;"><i class="fas fa-video"></i> Video</h3>
+                        <video controls class="recipe-video">
+                            <source src="{{ recipe.video.url }}" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    {% endif %}
+
+                    {% if not recipe.photo and not recipe.video %}
+                    <p style="text-align: center; color: #666; padding: 40px;">
+                        <i class="fas fa-image" style="font-size: 48px; margin-bottom: 15px; display: block;"></i>
+                        No photos or videos available for this recipe.
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- Ingredients Section -->
+                <div class="ingredients-section">
+                    <h2><i class="fas fa-shopping-basket"></i> Ingredients</h2>
+                    <div class="ingredients-content">{{ recipe.ingredients }}</div>
+                </div>
+
+                <!-- Instructions Section -->
+                <div class="instructions-section">
+                    <h2><i class="fas fa-list-ol"></i> Instructions</h2>
+                    <div class="instructions-content">{{ recipe.instructions }}</div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="recipe-actions">
+                    <button class="action-btn like-btn {% if recipe.is_liked %}liked{% endif %}" 
+                            id="like-btn-detail"
+                            data-recipe-id="{{ recipe.id }}">
+                        <i class="fas fa-heart"></i>
+                        <span class="like-text">{% if recipe.is_liked %}Liked{% else %}Like{% endif %}</span>
+                        <span class="like-count" id="like-count-detail">{{ recipe.like_count }}</span>
+                    </button>
+                    
+                    <button class="action-btn share-btn" 
+                            data-recipe-id="{{ recipe.id }}"
+                            data-recipe-title="{{ recipe.title|escapejs }}">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                    
+                    <a href="{% url 'recipe_list' %}" class="action-btn back-btn">
+                        <i class="fas fa-arrow-left"></i> Back to Recipes
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <script>
+        // CSRF Token for AJAX requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Toggle Like
+        const likeBtn = document.getElementById('like-btn-detail');
+        if (likeBtn) {
+            likeBtn.addEventListener('click', function() {
+                const recipeId = this.getAttribute('data-recipe-id');
+                const likeCountEl = document.getElementById('like-count-detail');
+                const likeText = this.querySelector('.like-text');
+                
+                // Disable button during request
+                this.disabled = true;
+                this.style.opacity = '0.6';
+
+                fetch(`/recipes/${recipeId}/toggle-like/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken
+                    },
+                    credentials: 'same-origin'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Update like count
+                        likeCountEl.textContent = data.like_count;
+                        
+                        // Update button state
+                        if (data.is_liked) {
+                            this.classList.add('liked');
+                            likeText.textContent = 'Liked';
+                        } else {
+                            this.classList.remove('liked');
+                            likeText.textContent = 'Like';
+                        }
+                    } else {
+                        if (data.message && data.message.includes('login')) {
+                            alert('Please login to like recipes');
+                            window.location.href = '{% url "login_view" %}';
+                        } else {
+                            alert('Error: ' + (data.message || 'An error occurred'));
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('An error occurred. Please try again.');
+                })
+                .finally(() => {
+                    this.disabled = false;
+                    this.style.opacity = '1';
+                });
+            });
+        }
+
+        // Share Recipe
+        const shareBtn = document.querySelector('.share-btn');
+        if (shareBtn) {
+            shareBtn.addEventListener('click', function() {
+                const recipeId = this.getAttribute('data-recipe-id');
+                const recipeTitle = this.getAttribute('data-recipe-title');
+                const url = window.location.href;
+                
+                if (navigator.share) {
+                    navigator.share({
+                        title: recipeTitle,
+                        text: `Check out this recipe: ${recipeTitle}`,
+                        url: url
+                    }).catch(err => console.log('Error sharing', err));
+                } else {
+                    // Fallback: Copy to clipboard
+                    navigator.clipboard.writeText(url).then(() => {
+                        alert('Recipe link copied to clipboard!');
+                    }).catch(err => {
+                        // Fallback: Show URL in prompt
+                        prompt('Copy this link:', url);
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+

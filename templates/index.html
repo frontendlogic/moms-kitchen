@@ -1,0 +1,720 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Website - Home</title>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+ <!-- Favicon -->
+    <link rel="icon" href="{% static 'image/logo.png' %}" type="image/x-icon" style="height:1000px; width: 2000px;">
+  </head>
+
+  <style>
+    #chatbot-container { position: fixed; bottom: 90px; right: 20px; width: 350px; height: 480px; background: #fff; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); display: none; flex-direction: column; font-family: Arial,sans-serif; z-index:9999; overflow:hidden;}
+  #chatbot-header {background:#0a500d;color:#fff;padding:12px;display:flex;justify-content:space-between;align-items:center;font-weight:bold;}
+  #chatbot-header button {background:none;border:none;color:#fff;font-size:18px;cursor:pointer;}
+  #chatbot-messages {flex:1;padding:10px;overflow-y:auto;display:flex;flex-direction:column;font-size:14px;}
+  #chatbot-messages .bot {background:#e6e6e6;padding:8px 12px;border-radius:10px;margin:5px 0;max-width:85%;}
+  #chatbot-messages .user {background:#0a500d;color:#fff;padding:8px 12px;border-radius:10px;margin:5px 0;align-self:flex-end;max-width:85%;}
+  #chatbot-input {display:flex;border-top:1px solid #ddd;padding:8px; flex-direction: column;}
+  #chatbot-input input {flex:1;padding:10px;border-radius:20px;border:none;outline:none;background:#f0f0f0;font-size:14px;margin-bottom:5px;}
+  #chatbot-input button {margin-left:8px;background:#0a500d;color:white;border:none;padding:10px 14px;border-radius:20px;cursor:pointer;font-size:16px;}
+  #chatbot-toggle {position:fixed;bottom:20px;right:20px;background:#0a500d;color:white;border:none;border-radius:50%;width:60px;height:60px;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.3);z-index:9999;}
+  #chatbot-messages a {color:#0a500d;text-decoration:underline;} #chatbot-messages a:hover {color:#4CAF50;}
+
+  /*AI Serach bar*/
+  #ai-search-bar {
+    transition: width 0.3s ease;
+}
+
+#ai-search-bar:focus {
+    width: 350px; /* expands when typing */
+}
+/*SeachBar*/
+  .search-container {
+    position: relative;
+    display: inline-block;
+  }
+
+  .search-container input[type="text"] {
+    padding: 5px 10px 5px 36px; /* leave space for icon on left */
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    outline: none;
+    width: 250px;
+  }
+
+  .search-container .icon {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none; /* so clicking the icon focuses input */
+    width: 20px;
+    height: 20px;
+  }
+
+  /* Cuisine Modal Styles */
+  .cuisine-modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0,0,0,0.7);
+    animation: fadeIn 0.3s;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .modal-content {
+    background-color: #fefefe;
+    margin: 2% auto;
+    padding: 0;
+    border: none;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 1200px;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  }
+
+  .modal-header {
+    background: linear-gradient(135deg, #0a500d 0%, #27ae60 100%);
+    color: white;
+    padding: 20px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .modal-header h2 {
+    margin: 0;
+    font-size: 28px;
+  }
+
+  .close-modal {
+    color: white;
+    font-size: 35px;
+    font-weight: bold;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.3s;
+  }
+
+  .close-modal:hover {
+    background: rgba(255,255,255,0.2);
+  }
+
+  .modal-body {
+    padding: 30px;
+    overflow-y: auto;
+    flex: 1;
+  }
+
+  .subcuisine-section {
+    margin-bottom: 40px;
+  }
+
+  .subcuisine-title {
+    font-size: 24px;
+    color: #0a500d;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 3px solid #27ae60;
+    text-transform: capitalize;
+  }
+
+  .recipes-grid-modal {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 25px;
+  }
+
+  .recipe-card-modal {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    transition: transform 0.3s, box-shadow 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .recipe-card-modal:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+  }
+
+  .recipe-image-modal {
+    width: 60%;
+    max-width: 400px;
+    height: 300px;
+    object-fit: cover;
+    margin: 0 auto;
+    display: block;
+    border-radius: 12px;
+  }
+
+  .recipe-image-placeholder {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 48px;
+    margin: 0 auto;
+    border-radius: 12px;
+  }
+
+  .recipe-content-modal {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .recipe-title-modal {
+    font-size: 20px;
+    font-weight: bold;
+    color: #0a500d;
+    margin-bottom: 10px;
+  }
+
+  .recipe-description-modal {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 15px;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .recipe-meta-modal {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    font-size: 12px;
+    color: #888;
+  }
+
+  .recipe-actions-modal {
+    display: flex;
+    gap: 10px;
+    margin-top: auto;
+    padding-top: 15px;
+    border-top: 1px solid #eee;
+  }
+
+  .action-btn-modal {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    font-size: 14px;
+  }
+
+  .like-btn-modal {
+    background: #f8f9fa;
+    color: #c0392b;
+    border: 2px solid #c0392b;
+  }
+
+  .like-btn-modal:hover {
+    background: #c0392b;
+    color: white;
+  }
+
+  .like-btn-modal.liked {
+    background: #c0392b;
+    color: white;
+  }
+
+  .view-btn-modal {
+    background: #27ae60;
+    color: white;
+  }
+
+  .view-btn-modal:hover {
+    background: #229954;
+  }
+
+  .like-count-modal {
+    font-weight: bold;
+    margin-left: 5px;
+  }
+
+  .no-recipes-modal {
+    text-align: center;
+    padding: 40px;
+    color: #666;
+  }
+
+  .video-container-modal {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    margin: 0 auto;
+  }
+
+  .video-container-modal video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @media (max-width: 768px) {
+    .modal-content {
+      width: 95%;
+      margin: 5% auto;
+      max-height: 95vh;
+    }
+
+    .recipes-grid-modal {
+      grid-template-columns: 1fr;
+    }
+
+    .modal-header h2 {
+      font-size: 20px;
+    }
+
+    .recipe-image-modal,
+    .recipe-image-placeholder,
+    .video-container-modal {
+      max-width: 100%;
+      height: 250px;
+    }
+  }
+    
+  </style>
+
+<body>
+
+<div class="background-slider">
+    <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+    <img src= "{% static 'image/p2.jpg' %}" class="bg-slide">
+    <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+    <div class="background-overlay"></div>
+</div>
+
+<header>
+    <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo-link">
+            <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+        </a>  
+         <ul>
+         <!--AI Searchbar--><div class="search-container">
+  <img src="{% static 'image/AI_OP.png' %}" alt="AI icon" class="icon">
+  <a href="{% url 'ai_recipe_page' %}" style="text-decoration: none;">
+    <input type="text" id="ai-search-bar" placeholder="Ask AI about recipes..." readonly style="cursor: pointer;" />
+  </a>
+</div>
+            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"> <i class="fa-solid fa-house"></i></a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i></a></li>
+            <li><a href="{% url 'feedback' %}" class="{% if request.path == '/feedback/' %}active{% endif %}"><i class="fas fa-lightbulb"></i></a></li>
+            <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i></a></li>
+            {% if user_id %}
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i></a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a></li>
+            {% else %}
+                <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i></a></li>
+                <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i></a></li>
+            {% endif %}
+        </ul>
+    </nav>
+</header>
+ 
+<main>
+    <section class="hero">
+        <img src="{% static 'Image/Home_page_image.jpg' %}" style="width: 150px;height: auto; margin-bottom: 1rem;border-radius: 50px;">
+        
+        <h1 style="color:#0a500d;">Welcome to MoM's Kitchen!</h1>
+        <p>Rooted in Tradition 🌿, Cooked with Love ❤️ – That’s Mom’s Kitchen 🍳</p>
+        <a href="{% url 'upload' %}" class="cta-button">Upload Recipe</a>
+    </section>
+
+    <section class="featured-recipes">
+        <h2>Featured Cuisines</h2>
+            <div class="recipe-cards">
+               <div class="card cuisine-card" onclick="openCuisineModal('Indian')" style="cursor: pointer;">
+                 <img src="{% static 'Image/Indian.jpg' %}" alt="Indian Food">
+                   <h3>Indian Cuisine</h3>
+                   <p>Experience the rich and diverse flavors of India with our authentic recipes.</p>
+               </div>
+               <div class="card cuisine-card" onclick="openCuisineModal('Korean')" style="cursor: pointer;">
+                   <img src="{% static 'image/Korean.jpg' %}" alt="Korean Food">
+                   <h3>Korean Cuisine</h3>
+                   <p>Bold flavors, unique spices, and a perfect balance of sweet and savory dishes.</p>
+               </div>
+               <div class="card cuisine-card" onclick="openCuisineModal('Japanese')" style="cursor: pointer;">
+                   <img src="{% static 'image/Japanese.jpg' %}" alt="Japanese Food">
+                   <h3>Japanese Cuisine</h3>
+                   <p>Discover the delicate and refined art of Japanese cooking, from sushi to ramen.</p>
+               </div>
+               <div class="card cuisine-card" onclick="openCuisineModal('Chinese')" style="cursor: pointer;">
+                   <img src="{% static 'Image/Chinese.jpg' %}" alt="Chinese Food">
+                   <h3>Chinese Cuisine</h3>
+                   <p>A vast range of flavors and cooking styles from various regions of China.</p>
+               </div>
+               <div class="card cuisine-card" onclick="openCuisineModal('Thai')" style="cursor: pointer;">
+                   <img src="{% static 'image/Thai.jpg' %}" alt="Thai Food">
+                   <h3>Thai Cuisine</h3>
+                   <p>Enjoy the perfect blend of sweet, sour, spicy, and salty in every bite.</p>
+               </div>
+               <div class="card cuisine-card" onclick="openCuisineModal('Italian')" style="cursor: pointer;">
+                   <img src="{% static 'Image/Italian.jpg' %}" alt="Italian Food">
+                   <h3>Italian Cuisine</h3>
+                   <p>Classic pastas, pizzas, and more delicious Italian recipes.</p>
+               </div>
+            </div>
+    </section>
+
+    {% if user_id %}
+    <section class="featured-recipes">
+        <h2>Latest Recipes</h2>
+        <div class="recipe-cards">
+              {% for recipe in recipes %}
+            <div class="card">
+                  {% if recipe.photo %}
+                    <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}">
+                {% endif %}
+                  <h3>{{ recipe.title }}</h3>
+                  <p>{{ recipe.description|default:"No description" }}</p>
+                  <p>By {{ recipe.user.user_name }}</p>
+            </div>
+            {% empty %}
+                <p>No recipes yet. <a href="{% url 'upload' %}">Upload one</a>!</p>
+            {% endfor %}
+        </div>
+    </section>
+    {% endif %}
+</main>
+
+<!--Customer Care -->
+<div id="chatbot-container">
+  <div id="chatbot-header">
+    <span>Recipe Customer Care</span>
+    <button id="chatbot-close">×</button>
+  </div>
+  <div id="chatbot-messages"></div>
+  <div id="chatbot-input">
+    <input type="text" id="chatbot-text" placeholder="Type your question...">
+    <button id="chatbot-send"><i class="fa-solid fa-paper-plane"></i></button>
+  </div>
+</div>
+<button id="chatbot-toggle">💬</button>
+
+<!-- Cuisine Modal -->
+<div id="cuisineModal" class="cuisine-modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <h2 id="modalCuisineTitle">Cuisine Recipes</h2>
+      <button class="close-modal" onclick="closeCuisineModal()">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBody">
+      <!-- Recipes will be loaded here -->
+    </div>
+  </div>
+</div>
+
+<!-- Hidden script tag with JSON data -->
+{% if cuisines_json %}
+<script type="application/json" id="cuisines-data">{{ cuisines_json|safe }}</script>
+{% endif %}
+
+<!-- Footer -->
+{% include 'partials/footer.html' %}
+
+<script>
+const chatbotToggle = document.getElementById("chatbot-toggle");
+const chatbotContainer = document.getElementById("chatbot-container");
+const chatbotClose = document.getElementById("chatbot-close");
+const chatbotSend = document.getElementById("chatbot-send");
+const chatbotText = document.getElementById("chatbot-text");
+const chatbotMessages = document.getElementById("chatbot-messages");
+
+chatbotToggle.onclick = () => chatbotContainer.style.display = "flex";
+chatbotClose.onclick = () => chatbotContainer.style.display = "none";
+
+function addMessage(sender,text){
+  const msg = document.createElement("div");
+  msg.classList.add(sender.toLowerCase());
+  if(sender.toLowerCase() === "bot") msg.innerHTML = text;
+  else msg.textContent = text;
+  chatbotMessages.appendChild(msg);
+  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+}
+
+function sendChat(){
+  const userMsg = chatbotText.value.trim();
+  if(!userMsg) return;
+  addMessage("user",userMsg);
+  chatbotText.value="";
+  const reply = getBotResponse(userMsg.toLowerCase());
+  setTimeout(()=>addMessage("bot",reply),400);
+}
+
+function sendSuggestion(text){
+  chatbotText.value = text;
+  sendChat();
+}
+
+chatbotText.addEventListener("keydown",e=>{if(e.key==="Enter") sendChat();});
+
+// ---------------- Customer Care Logic ----------------
+function getBotResponse(input){
+  if(input.includes("upload"))
+    return "To upload a recipe:1️⃣ Make sure you're logged in. 2️⃣ Go to <a href='/upload'>Upload Recipes</a>. 3️⃣ Select file and submit. If it still doesn't work, <a href='/contact'>contact support</a>.";
+  if(input.includes("password") || input.includes("login"))
+    return "If you forgot your password, go to <a href='/forgot-password'>Forgot Password</a> and reset it.";
+  if(input.includes("delete") && input.includes("account"))
+    return "To delete your account, go to <a href='/account/settings'>Account Settings</a> and click 'Delete Account'.";
+  if(input.includes("likes"))
+    return "To like a recipe, click the ❤️ button below the recipe. View all liked recipes <a href='/profile/likes'>here</a>.";
+  if(input.includes("contact") || input.includes("support"))
+    return "You can contact our support team here: <a href='/contact'>Contact Us</a>.";
+  if(input.includes("account") && input.includes("make"))
+    return "To make a new account: 1️⃣ Go to <a href='/signup'>Sign Up</a>. 2️⃣ Fill details and submit. 3️⃣ Confirm your email. 4️⃣ Login to your account.";
+  if(input.includes("account") && input.includes("page"))
+    return "Your account page is available here: <a href='/account'>Go to Account Page</a>.";
+  if(input.includes("hello") || input.includes("hi"))
+    return "Hi 👋! Welcome to Recipe Customer Care. How can I assist you today?";
+  return "Sorry, I didn't understand 🤔. Please try rephrasing or <a href='/contact'>contact support</a>.";
+}
+
+// ==================== Cuisine Modal Functions ====================
+
+// Cuisine data from Django - using JSON for safe parsing
+let cuisinesData = {};
+(function() {
+  try {
+    const dataScript = document.getElementById('cuisines-data');
+    if (dataScript) {
+      cuisinesData = JSON.parse(dataScript.textContent);
+    }
+  } catch(e) {
+    console.error('Error parsing cuisine data:', e);
+    cuisinesData = {};
+  }
+})();
+
+// CSRF Token for AJAX
+function getCookie(name) {
+  let cookieValue = null;
+  if (document.cookie && document.cookie !== '') {
+    const cookies = document.cookie.split(';');
+    for (let i = 0; i < cookies.length; i++) {
+      const cookie = cookies[i].trim();
+      if (cookie.substring(0, name.length + 1) === (name + '=')) {
+        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+        break;
+      }
+    }
+  }
+  return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+
+// Open cuisine modal
+function openCuisineModal(cuisineName) {
+  const modal = document.getElementById('cuisineModal');
+  const modalTitle = document.getElementById('modalCuisineTitle');
+  const modalBody = document.getElementById('modalBody');
+  
+  modalTitle.textContent = `${cuisineName} Cuisine Recipes`;
+  
+  // Check if cuisinesData exists and has the cuisine
+  if (!cuisinesData || typeof cuisinesData !== 'object') {
+    modalBody.innerHTML = `
+      <div class="no-recipes-modal">
+        <h3>Error loading recipes</h3>
+        <p>Unable to load recipe data. Please refresh the page.</p>
+      </div>
+    `;
+    modal.style.display = 'block';
+    return;
+  }
+  
+  const cuisine = cuisinesData[cuisineName];
+  if (!cuisine || Object.keys(cuisine).length === 0) {
+    modalBody.innerHTML = `
+      <div class="no-recipes-modal">
+        <h3>No recipes available</h3>
+        <p>No recipes have been uploaded for ${cuisineName} cuisine yet.</p>
+      </div>
+    `;
+    modal.style.display = 'block';
+    return;
+  }
+  
+  let html = '';
+  for (const [subcuisine, recipes] of Object.entries(cuisine)) {
+    if (recipes.length === 0) continue;
+    
+    html += `<div class="subcuisine-section">`;
+    html += `<h3 class="subcuisine-title">${subcuisine}</h3>`;
+    html += `<div class="recipes-grid-modal">`;
+    
+    recipes.forEach(recipe => {
+      html += `
+        <div class="recipe-card-modal" data-recipe-id="${recipe.id}">
+          ${recipe.video ? `
+            <div class="video-container-modal">
+              <video controls>
+                <source src="${recipe.video}" type="video/mp4">
+                Your browser does not support the video tag.
+              </video>
+            </div>
+          ` : recipe.photo ? `
+            <img src="${recipe.photo}" alt="${recipe.title}" class="recipe-image-modal">
+          ` : `
+            <div class="recipe-image-placeholder">
+              <i class="fas fa-utensils"></i>
+            </div>
+          `}
+          
+          <div class="recipe-content-modal">
+            <div class="recipe-meta-modal">
+              <span class="recipe-author">By ${recipe.user}</span>
+              <span>${recipe.created_at}</span>
+            </div>
+            
+            <h4 class="recipe-title-modal">${recipe.title}</h4>
+            <p class="recipe-description-modal">${recipe.description || 'No description available.'}</p>
+            
+            <div class="recipe-actions-modal">
+              <button class="action-btn-modal like-btn-modal ${recipe.is_liked ? 'liked' : ''}" 
+                      onclick="toggleLikeModal(${recipe.id})" 
+                      id="like-btn-modal-${recipe.id}">
+                <i class="fas fa-heart"></i>
+                <span class="like-text">${recipe.is_liked ? 'Liked' : 'Like'}</span>
+                <span class="like-count-modal" id="like-count-modal-${recipe.id}">${recipe.like_count}</span>
+              </button>
+              
+              <button class="action-btn-modal view-btn-modal" onclick="viewRecipeModal(${recipe.id})">
+                <i class="fas fa-eye"></i> View
+              </button>
+            </div>
+          </div>
+        </div>
+      `;
+    });
+    
+    html += `</div></div>`;
+  }
+  
+  modalBody.innerHTML = html;
+  modal.style.display = 'block';
+  document.body.style.overflow = 'hidden'; // Prevent background scrolling
+}
+
+// Close cuisine modal
+function closeCuisineModal() {
+  const modal = document.getElementById('cuisineModal');
+  modal.style.display = 'none';
+  document.body.style.overflow = 'auto'; // Restore scrolling
+}
+
+// Close modal when clicking outside
+window.onclick = function(event) {
+  const modal = document.getElementById('cuisineModal');
+  if (event.target === modal) {
+    closeCuisineModal();
+  }
+}
+
+// Toggle like in modal
+function toggleLikeModal(recipeId) {
+  const likeBtn = document.getElementById(`like-btn-modal-${recipeId}`);
+  const likeCountEl = document.getElementById(`like-count-modal-${recipeId}`);
+  const likeText = likeBtn.querySelector('.like-text');
+  
+  // Disable button during request
+  likeBtn.disabled = true;
+  likeBtn.style.opacity = '0.6';
+
+  fetch(`/recipes/${recipeId}/toggle-like/`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-CSRFToken': csrftoken
+    },
+    credentials: 'same-origin'
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      // Update like count
+      likeCountEl.textContent = data.like_count;
+      
+      // Update button state
+      if (data.is_liked) {
+        likeBtn.classList.add('liked');
+        likeText.textContent = 'Liked';
+      } else {
+        likeBtn.classList.remove('liked');
+        likeText.textContent = 'Like';
+      }
+    } else {
+      if (data.message && data.message.includes('login')) {
+        alert('Please login to like recipes');
+        window.location.href = '/login/';
+      } else {
+        alert('Error: ' + (data.message || 'An error occurred'));
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    alert('An error occurred. Please try again.');
+  })
+  .finally(() => {
+    likeBtn.disabled = false;
+    likeBtn.style.opacity = '1';
+  });
+}
+
+// View recipe in modal - navigate to detail page
+function viewRecipeModal(recipeId) {
+  window.location.href = `/recipes/${recipeId}/`;
+}
+</script>
+</body>
+</html>

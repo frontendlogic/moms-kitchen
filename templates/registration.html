@@ -1,0 +1,266 @@
+{% load static %}
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registration</title>
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+</head>
+<style>
+main
+{
+    padding: 0rem 0;
+}
+body 
+{
+    background-color:#eee9f0;
+    font-family: 'Arial', sans-serif;
+  
+}
+.form-container {
+       
+    max-width: 400px;
+    margin: 60px auto;
+    background-color: #e6f2e6; /* Light green to match navbar */
+    padding: 63px;
+    border-radius: 18px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.form-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #442c4b;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color:#734e7c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    border-radius: 60px;
+    background-color: rgb(115, 201, 128);
+    color:#442c4b;
+}
+
+p {
+    border-radius: 90px;
+    text-align: center;
+    color: #050505;
+    margin-top: 15px;
+}
+h2
+{
+    border-radius: 90px;
+}
+a{
+    color: #442c4b;
+}
+
+/*Header*/
+/* Header and Navigation */
+header
+{
+    color: #333;
+    padding: -1rem 0;
+    border-bottom: 2px solid #ddd;
+        display: block;
+    unicode-bidi: isolate;
+}
+
+nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 50%;
+    margin: auto;
+}
+
+nav ul 
+{
+    list-style: none;
+    display: flex;
+}
+
+nav ul li {
+    margin-left: 20px;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color:  rgb(35, 74, 41);
+    font-weight: bold;
+    padding: 5px 10px;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover,
+nav ul li a.active {
+    color: rgb(2, 43, 8);
+    border-bottom: 2px solid rgb(2, 43, 8);
+}
+
+.navbar {
+
+    height: 81px !important;
+    display: flex;
+    justify-content: space-between; /* Logo left, menu right */
+    align-items: center; /* Vertical alignment */
+    padding: 10px 40px;
+}
+
+.carousel-item img {
+    height: 500px;
+    object-fit: cover;
+}
+/* ---- Logo Styling ---- */
+.logo 
+{
+    height: 341px !important;
+    width: auto;
+    
+}
+
+/* ---- Navigation Links Styling ---- */
+.nav-links {
+    list-style: none; /* Removes the bullet points from the list */
+    display: flex; /* Arranges the list items horizontally */
+    margin: 0;
+    padding: 0;
+}
+
+.nav-links li {
+    margin-left: 30px; /* Adds space between each navigation link */
+}
+
+.nav-links a {
+    text-decoration: none; /* Removes the underline from the links */
+    color: white; /* Changes the link color */
+    font-size: 18px; /* Adjusts font size for better readability */
+    font-weight: bold;
+}
+
+/* Background slider */
+.background-slider {
+ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.3s ease-in-out;
+}
+
+/* Background overlay - dedicated div for better control */
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(82, 82, 81, 0.5); /* Semi-transparent dark overlay */
+    z-index: 1; /* Above background images but below content */
+    pointer-events: none; /* Allow clicks to pass through */
+}
+.bg-slide.active {
+      background-size: cover;
+    background-position: center;
+     background-color: rgb(82, 82, 81);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /* Use the filter property to adjust brightness */
+    filter: brightness(1.1); /* 1.0 is original, > 1.0 is brighter */
+    opacity: 1;
+}
+
+/*ICons */
+ul li a i {
+  font-size: 18px;
+    margin-right: 6px;   /* space between icon and text */
+}
+ul li a.active i {
+  color: #0f361f;      /* highlight active icon */
+
+}
+</style>
+<body>
+    <div class="background-slider">
+    <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+    <img src= "{% static 'image/p2.jpg' %}" class="bg-slide  ">
+    <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+    <div class="background-overlay"></div>
+</div>
+    <main>
+        
+<header>
+     <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo-link">
+     <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+
+            </a>
+                 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <ul>
+            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"> <i class="fa-solid fa-house"></i></a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i></a></li>
+            <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}"><i class="fas fa-envelope"></i></a></li>
+            <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i></a></li>
+            {% if user_id %}
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i></a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i></a></li>
+            {% else %}
+                <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i></a></li>
+            {% endif %}
+    </nav>
+</header>
+
+
+<div class="form-container">
+   
+    <h2>Create an Account</h2>
+    {% include 'partials/messages.html' %}
+<form method="post">
+   {% csrf_token %}
+  <input type="text" name="user_name" placeholder="Username" value="{{ prefill_user_name }}" required>
+  <input type="email" name="email" placeholder="Email" value="{{ prefill_email }}">
+  <input type="password" name="password" placeholder="Password">
+  <button type="submit">Register</button>
+  <p>Already have an account? <a href="{% url 'login_view' %}">Login here</a></p>
+</form>
+
+</div>
+ <!--Footer -->
+{% include 'partials/footer.html' %}
+</main>
+</body>
+  </html>

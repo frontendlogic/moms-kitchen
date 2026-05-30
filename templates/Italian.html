@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Italian Cuisine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fefaf6;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #c0392b;
+      text-align: left;
+      margin: 20px;
+    }
+
+    .menu-icon {
+      font-size: 20px;
+      cursor: pointer;
+      color: #c0392b;
+      margin-left: 20px;
+    }
+
+    /* Generic Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #c0392b;
+    }
+
+    .close-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .close-x {
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      font-size: 22px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .dishes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .dish {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .dish:hover {
+      transform: scale(1.03);
+    }
+
+    .dish img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .dish h3 {
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+
+    #dishModal img,
+    #dishModal video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    /* Like Button */
+    .like-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 22px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .like-count {
+      color: #2c3e50;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🍕 Italian Cuisine</h1>
+  <span class="menu-icon" onclick="openMenu()">☰ Menu</span>
+
+  <!-- Menu Modal -->
+  <div id="menuModal" class="modal">
+    <div class="modal-content">
+      <h2>Select Cuisine</h2>
+      <label><input type="radio" name="cuisine" value="all" checked> All</label>
+      <label><input type="radio" name="cuisine" value="pasta"> Pasta</label>
+      <label><input type="radio" name="cuisine" value="pizza"> Pizza</label>
+      <label><input type="radio" name="cuisine" value="dessert"> Dessert</label>
+      <button class="close-btn" onclick="closeMenu()">Close</button>
+    </div>
+  </div>
+
+  <!-- Dish Modal -->
+  <div id="dishModal" class="modal">
+    <div class="modal-content">
+      <span class="close-x" onclick="closeDish()">&times;</span>
+      <h2 id="dishTitle"></h2>
+      <img id="dishImage" src="" alt="">
+      <p id="dishDescription"></p>
+      <video id="dishVideo" controls></video>
+      <button class="like-btn" onclick="likeDish()">❤️</button>
+      <p class="like-count" id="likeCount">Likes: 0</p>
+<p class="view-count" id="viewCount">Views: 0</p>
+<button class="like-btn" style="color:#3498db;" id="shareBtn" onclick="shareDish()">🔗 Share</button>
+
+    </div>
+  </div>
+
+  <!-- Dishes -->
+  <div class="dishes">
+    <div class="dish pasta" onclick="openDish('Spaghetti Carbonara','https://via.placeholder.com/500x300?text=Spaghetti+Carbonara','Classic Italian pasta with eggs, cheese, pancetta, and pepper.','https://www.w3schools.com/html/mov_bbb.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Spaghetti+Carbonara">
+      <h3>Spaghetti Carbonara (Pasta)</h3>
+    </div>
+
+    <div class="dish pizza" onclick="openDish('Margherita Pizza','https://via.placeholder.com/500x300?text=Margherita+Pizza','Classic pizza with fresh tomato, mozzarella, and basil.','https://www.w3schools.com/html/mov_bbb.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Margherita+Pizza">
+      <h3>Margherita Pizza (Pizza)</h3>
+    </div>
+
+    <div class="dish dessert" onclick="openDish('Tiramisu','https://via.placeholder.com/500x300?text=Tiramisu','Coffee-flavored Italian dessert with mascarpone cheese.','https://www.w3schools.com/html/mov_bbb.mp4')">
+      <img src="https://via.placeholder.com/250x150?text=Tiramisu">
+      <h3>Tiramisu (Dessert)</h3>
+    </div>
+  </div>
+
+<script>
+// Menu modal
+function openMenu() {
+  document.getElementById("menuModal").style.display = "flex";
+}
+function closeMenu() {
+  document.getElementById("menuModal").style.display = "none";
+}
+
+// Like and view tracking
+let dishLikes = {};
+let dishViews = {};
+let currentDish = "";
+
+// Open dish modal
+function openDish(title, image, desc, video) {
+  currentDish = title;
+  document.getElementById("dishTitle").innerText = title;
+  document.getElementById("dishImage").src = image;
+  document.getElementById("dishDescription").innerText = desc;
+  document.getElementById("dishVideo").src = video;
+  document.getElementById("dishModal").style.display = "flex";
+
+  // Initialize counters if not present
+  if (!dishLikes[currentDish]) dishLikes[currentDish] = 0;
+  if (!dishViews[currentDish]) dishViews[currentDish] = 0;
+
+  // Increment view counter
+  dishViews[currentDish]++;
+
+  updateLikeDisplay();
+  updateViewDisplay();
+}
+
+// Close dish modal
+function closeDish() {
+  document.getElementById("dishModal").style.display = "none";
+  document.getElementById("dishVideo").pause();
+}
+
+// Like dish
+function likeDish() {
+  dishLikes[currentDish]++;
+  updateLikeDisplay();
+}
+
+// Update like display
+function updateLikeDisplay() {
+  document.getElementById("likeCount").innerText = "Likes: " + dishLikes[currentDish];
+}
+
+// Update view display
+function updateViewDisplay() {
+  document.getElementById("viewCount").innerText = "Views: " + dishViews[currentDish];
+}
+
+// Share dish
+function shareDish() {
+  const dishTitle = currentDish;
+  const dishDesc = document.getElementById("dishDescription").innerText;
+  const dishUrl = window.location.href;
+
+  if (navigator.share) {
+    // Use native share if available
+    navigator.share({
+      title: dishTitle,
+      text: dishDesc,
+      url: dishUrl
+    })
+    .then(() => console.log('Shared successfully'))
+    .catch((error) => console.log('Error sharing:', error));
+  } else {
+    // Fallback: copy dish info to clipboard
+    const shareText = `${dishTitle}\n${dishDesc}\n${dishUrl}`;
+    navigator.clipboard.writeText(shareText)
+      .then(() => alert("Dish info copied! You can share it anywhere."))
+      .catch(() => alert("Failed to copy. Please copy manually."));
+  }
+}
+
+// Filtering by cuisine
+const radios = document.querySelectorAll('input[name="cuisine"]');
+const dishes = document.querySelectorAll('.dish');
+radios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const cuisine = radio.value;
+    dishes.forEach(dish => {
+      dish.style.display = cuisine === 'all' || dish.classList.contains(cuisine) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+
+</body>
+</html>

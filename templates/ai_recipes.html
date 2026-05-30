@@ -1,0 +1,581 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Recipe Assistant - MoM's Kitchen</title>
+    
+    <link rel="stylesheet" href="{% static 'css/style.css'%}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'image/logo.png' %}" type="image/x-icon" style="height:1000px; width: 2000px;">
+    
+    <style>
+        /* AI Page Background */
+        .ai-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .ai-bg-slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0;
+            transition: opacity 1.3s ease-in-out;
+        }
+
+        .ai-bg-slide.active {
+            opacity: 1;
+        }
+
+        /* AI Container */
+        .ai-container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            position: relative;
+        }
+
+        /* AI Header */
+        .ai-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #0a500d;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 800px;
+        }
+
+        .ai-header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #0a500d;
+        }
+
+        .ai-header p {
+            font-size: 1.2rem;
+            color: #333;
+        }
+
+        /* AI Input Container */
+        .ai-input-container {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 600px;
+            margin-bottom: 2rem;
+        }
+
+        .ai-input-wrapper {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .ai-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            border: 2px solid #ddd;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            outline: none;
+            transition: all 0.3s ease;
+            background: #f8f9fa;
+        }
+
+        .ai-input:focus {
+            border-color: #0a500d;
+            box-shadow: 0 0 0 3px rgba(10, 80, 13, 0.1);
+            background: white;
+        }
+
+        .ai-submit-btn {
+            background: #0a500d;
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            font-weight: bold;
+        }
+
+        .ai-submit-btn:hover {
+            background: #0e2a0f;
+            transform: translateY(-2px);
+        }
+
+        /* AI Examples */
+        .ai-examples {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            color: #0a500d;
+            width: 100%;
+            max-width: 800px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .ai-examples h3 {
+            margin-bottom: 1rem;
+            text-align: center;
+            color: #0a500d;
+        }
+
+        .example-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .example-tag {
+            background: #bae4bf;
+            color: #0a500d;
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            border: 2px solid transparent;
+        }
+
+        .example-tag:hover {
+            background: #0a500d;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* YouTube CTA Styling */
+        .youtube-cta {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: linear-gradient(135deg, #ff0000, #cc0000);
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+        }
+
+        .youtube-cta h4 {
+            color: white;
+            margin-bottom: 0.5rem;
+            font-size: 1.3rem;
+        }
+
+        .youtube-cta p {
+            color: rgba(255, 255, 255, 0.9);
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+
+        .youtube-btn {
+            display: inline-block;
+            background: white;
+            color: #ff0000;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .youtube-btn:hover {
+            background: #f0f0f0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.3);
+        }
+
+        .youtube-btn i {
+            margin-right: 0.5rem;
+            font-size: 1.2rem;
+        }
+
+        /* YouTube suggestion links in responses */
+        .youtube-suggestion {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #ff0000;
+        }
+
+        .youtube-suggestion a {
+            color: #ff0000;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .youtube-suggestion a:hover {
+            text-decoration: underline;
+        }
+
+        /* AI Response */
+        .ai-response {
+            background: white;
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 2rem;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            display: none;
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .ai-response.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: #0a500d;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: bold;
+        }
+
+        .back-btn:hover {
+            background: #0e2a0f;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            color: #0a500d;
+            margin-top: 1rem;
+        }
+
+        .loading.show {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #0a500d;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .ai-container {
+                padding: 1rem;
+            }
+            
+            .ai-header h1 {
+                font-size: 2rem;
+            }
+            
+            .ai-input-container {
+                padding: 1.5rem;
+            }
+
+            .back-btn {
+                position: relative;
+                top: auto;
+                left: auto;
+                margin-bottom: 1rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Background Slider -->
+    <div class="ai-background">
+        <img src="{% static 'image/website-bg1.jpg' %}" class="ai-bg-slide active">
+        <img src="{% static 'image/website-bg2.jpg' %}" class="ai-bg-slide">
+        <img src="{% static 'image/website-bg3.jpg' %}" class="ai-bg-slide">
+        <img src="{% static 'image/website-bg4.jpg' %}" class="ai-bg-slide">
+        <img src="{% static 'image/website-bg5.jpg' %}" class="ai-bg-slide">
+    </div>
+
+    <a href="{% url 'index' %}" class="back-btn">
+        <i class="fas fa-arrow-left"></i>
+        Back to Home
+    </a>
+
+    <div class="ai-container">
+        <div class="ai-header">
+            <img src="{% static 'image/AI_OP.png' %}" alt="AI Assistant" style="width: 80px; height: 80px; margin-bottom: 1rem;">
+            <h1><i class="fas fa-robot"></i> AI Recipe Assistant</h1>
+            <p>Ask me anything about cooking, recipes, ingredients, or culinary techniques!</p>
+        </div>
+
+        <div class="ai-input-container">
+            <form id="ai-form">
+                <div class="ai-input-wrapper">
+                    <input type="text" id="ai-query" class="ai-input" placeholder="Enter ingredients like 'chicken, rice, vegetables' or ask 'What can I make with potatoes?' or 'Healthy breakfast ideas'" required>
+                </div>
+                <button type="submit" class="ai-submit-btn">
+                    <i class="fas fa-search"></i> Get Recipe Suggestions
+                </button>
+            </form>
+
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>AI is thinking...</p>
+            </div>
+
+            <div class="ai-response" id="ai-response">
+                <h3><i class="fas fa-robot"></i> AI Response:</h3>
+                <div id="response-content"></div>
+            </div>
+        </div>
+
+        <div class="ai-examples">
+            <h3>Try these ingredient-based queries:</h3>
+            <div class="example-tags">
+                <span class="example-tag" onclick="setQuery('What can I make with potatoes and onions?')">Potatoes & Onions</span>
+                <span class="example-tag" onclick="setQuery('Recipes with chicken and rice')">Chicken & Rice</span>
+                <span class="example-tag" onclick="setQuery('What to cook with lentils and vegetables?')">Lentils & Veggies</span>
+                <span class="example-tag" onclick="setQuery('Healthy recipes with spinach and eggs')">Spinach & Eggs</span>
+                <span class="example-tag" onclick="setQuery('What can I make with leftover rice?')">Leftover Rice</span>
+                <span class="example-tag" onclick="setQuery('Quick recipes with tomatoes and pasta')">Tomatoes & Pasta</span>
+                <span class="example-tag" onclick="setQuery('What to cook with paneer and spices?')">Paneer Recipes</span>
+                <span class="example-tag" onclick="setQuery('Easy recipes with beans and vegetables')">Beans & Veggies</span>
+            </div>
+            
+            <!-- YouTube CTA Section -->
+            <div class="youtube-cta">
+                <h4><i class="fab fa-youtube"></i> Watch Cooking Videos</h4>
+                <p>Want to see these recipes in action? Check out our YouTube channel for step-by-step cooking videos!</p>
+                <a href="https://www.youtube.com" target="_blank" class="youtube-btn">
+                    <i class="fab fa-youtube"></i> Visit Our YouTube Channel
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Background slider functionality
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.ai-bg-slide');
+        
+        function changeSlide() {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }
+        
+        // Change slide every 4 seconds
+        setInterval(changeSlide, 4000);
+
+        function setQuery(query) {
+            document.getElementById('ai-query').value = query;
+            document.getElementById('ai-query').focus();
+        }
+
+        document.getElementById('ai-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const query = document.getElementById('ai-query').value.trim();
+            if (!query) return;
+
+            // Show loading
+            document.getElementById('loading').classList.add('show');
+            document.getElementById('ai-response').classList.remove('show');
+
+            // Simulate AI response (replace with actual AI integration)
+            setTimeout(() => {
+                const response = generateAIResponse(query);
+                document.getElementById('response-content').innerHTML = response;
+                document.getElementById('loading').classList.remove('show');
+                document.getElementById('ai-response').classList.add('show');
+            }, 2000);
+        });
+
+        function generateAIResponse(query) {
+            const responses = {
+                'potatoes': `
+                    <h4>🥔 Delicious Potato Recipes:</h4>
+                    <p><strong>Quick Options:</strong></p>
+                    <ul>
+                        <li><strong>Mashed Potatoes:</strong> Boil, mash with butter, milk, salt</li>
+                        <li><strong>Roasted Potatoes:</strong> Cut, toss with oil, herbs, roast at 400°F</li>
+                        <li><strong>Potato Curry:</strong> Sauté with onions, tomatoes, spices</li>
+                        <li><strong>Aloo Paratha:</strong> Stuffed flatbread with spiced potatoes</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Add a pinch of turmeric while boiling for golden color!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Step-by-step potato recipes on our YouTube channel</a></p>
+                    </div>
+                `,
+                'chicken': `
+                    <h4>🍗 Chicken Recipe Ideas:</h4>
+                    <p><strong>Quick & Easy:</strong></p>
+                    <ul>
+                        <li><strong>Chicken Stir-fry:</strong> Sauté with vegetables, soy sauce, garlic</li>
+                        <li><strong>Chicken Curry:</strong> Cook with onions, tomatoes, garam masala</li>
+                        <li><strong>Grilled Chicken:</strong> Marinate with yogurt, spices, grill</li>
+                        <li><strong>Chicken Soup:</strong> Simmer with vegetables, herbs, noodles</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Marinate chicken for 30+ minutes for better flavor!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Chicken cooking techniques on our YouTube channel</a></p>
+                    </div>
+                `,
+                'lentils': `
+                    <h4>🫘 Nutritious Lentil Recipes:</h4>
+                    <p><strong>Protein-Packed Options:</strong></p>
+                    <ul>
+                        <li><strong>Dal Tadka:</strong> Yellow lentils with tempering spices</li>
+                        <li><strong>Lentil Soup:</strong> Red lentils with vegetables, herbs</li>
+                        <li><strong>Lentil Curry:</strong> Mixed lentils with coconut milk</li>
+                        <li><strong>Lentil Salad:</strong> Cooked lentils with fresh vegetables</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Soak lentils for 30 minutes to reduce cooking time!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Perfect dal recipes on our YouTube channel</a></p>
+                    </div>
+                `,
+                'spinach': `
+                    <h4>🥬 Healthy Spinach Recipes:</h4>
+                    <p><strong>Iron-Rich Options:</strong></p>
+                    <ul>
+                        <li><strong>Palak Paneer:</strong> Spinach curry with cottage cheese</li>
+                        <li><strong>Spinach Smoothie:</strong> Blend with fruits, yogurt</li>
+                        <li><strong>Saag:</strong> Traditional spinach curry</li>
+                        <li><strong>Spinach Salad:</strong> Fresh leaves with nuts, dressing</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Blanch spinach to reduce bitterness!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Green vegetable recipes on our YouTube channel</a></p>
+                    </div>
+                `,
+                'rice': `
+                    <h4>🍚 Perfect Rice Recipes:</h4>
+                    <p><strong>Versatile Options:</strong></p>
+                    <ul>
+                        <li><strong>Biryani:</strong> Fragrant rice with meat/vegetables</li>
+                        <li><strong>Fried Rice:</strong> Leftover rice with vegetables, eggs</li>
+                        <li><strong>Rice Pudding:</strong> Sweet dessert with milk, sugar</li>
+                        <li><strong>Rice Bowl:</strong> Topped with protein, vegetables</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Rinse rice until water runs clear for fluffier grains!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Rice cooking masterclass on our YouTube channel</a></p>
+                    </div>
+                `,
+                'paneer': `
+                    <h4>🧀 Delicious Paneer Recipes:</h4>
+                    <p><strong>Vegetarian Favorites:</strong></p>
+                    <ul>
+                        <li><strong>Paneer Butter Masala:</strong> Rich tomato curry with cream</li>
+                        <li><strong>Palak Paneer:</strong> Spinach curry with cottage cheese</li>
+                        <li><strong>Paneer Tikka:</strong> Grilled spiced cottage cheese</li>
+                        <li><strong>Paneer Paratha:</strong> Stuffed flatbread with spiced paneer</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Soak paneer in warm water to make it softer!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Paneer cooking secrets on our YouTube channel</a></p>
+                    </div>
+                `,
+                'leftover': `
+                    <h4>♻️ Creative Leftover Ideas:</h4>
+                    <p><strong>Transform Your Leftovers:</strong></p>
+                    <ul>
+                        <li><strong>Fried Rice:</strong> Leftover rice + vegetables + eggs</li>
+                        <li><strong>Soup:</strong> Leftover vegetables + broth + herbs</li>
+                        <li><strong>Sandwich:</strong> Leftover meat + bread + vegetables</li>
+                        <li><strong>Pasta:</strong> Leftover sauce + fresh pasta</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Store leftovers properly to maintain freshness!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Zero waste cooking tips on our YouTube channel</a></p>
+                    </div>
+                `,
+                'beans': `
+                    <h4>🫘 Protein-Rich Bean Recipes:</h4>
+                    <p><strong>Nutritious Options:</strong></p>
+                    <ul>
+                        <li><strong>Rajma Curry:</strong> Kidney beans in tomato gravy</li>
+                        <li><strong>Chickpea Salad:</strong> Fresh vegetables + lemon dressing</li>
+                        <li><strong>Bean Soup:</strong> Mixed beans with vegetables, herbs</li>
+                        <li><strong>Hummus:</strong> Chickpeas + tahini + lemon</li>
+                    </ul>
+                    <p><strong>💡 Pro Tip:</strong> Soak beans overnight for better texture!</p>
+                    <div class="youtube-suggestion">
+                        <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Bean cooking techniques on our YouTube channel</a></p>
+                    </div>
+                `
+            };
+
+            // Enhanced keyword matching for ingredient-based queries
+            const queryLower = query.toLowerCase();
+            for (const [key, response] of Object.entries(responses)) {
+                if (queryLower.includes(key)) {
+                    return response;
+                }
+            }
+
+            // Default response with ingredient focus
+            return `
+                <h4>🤖 AI Recipe Assistant Response:</h4>
+                <p>I'd be happy to help you with "${query}"! Here's what I can suggest:</p>
+                <ul>
+                    <li>🍳 <strong>Ingredient-based recipes</strong> - Tell me what you have!</li>
+                    <li>🥘 <strong>Cooking techniques</strong> - Learn proper methods</li>
+                    <li>🥗 <strong>Healthy alternatives</strong> - Nutritious substitutions</li>
+                    <li>⏰ <strong>Quick meals</strong> - Fast cooking solutions</li>
+                </ul>
+                <p><strong>💡 Try asking:</strong> "What can I make with [your ingredients]?"</p>
+                <div class="youtube-suggestion">
+                    <p><strong>📺 Watch:</strong> <a href="https://www.youtube.com" target="_blank">Step-by-step cooking videos on our YouTube channel</a></p>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

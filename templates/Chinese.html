@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chinese Cuisine</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #fefaf6;
+      margin: 0;
+      padding: 0;
+    }
+
+    h1 {
+      color: #c0392b;
+      text-align: left;
+      margin: 20px;
+    }
+
+    .menu-icon {
+      font-size: 20px;
+      cursor: pointer;
+      color: #c0392b;
+      margin-left: 20px;
+    }
+
+    /* Generic Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.5);
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-content h2 {
+      margin-bottom: 15px;
+      color: #c0392b;
+    }
+
+    .close-btn {
+      background: #e74c3c;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 15px;
+    }
+
+    .close-x {
+      position: absolute;
+      top: 8px;
+      right: 15px;
+      font-size: 22px;
+      color: #555;
+      cursor: pointer;
+    }
+
+    .dishes {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      padding: 20px;
+    }
+
+    .dish {
+      background: white;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      text-align: center;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .dish:hover {
+      transform: scale(1.03);
+    }
+
+    .dish img {
+      width: 100%;
+      height: 150px;
+      object-fit: cover;
+      border-radius: 10px;
+    }
+
+    .dish h3 {
+      margin: 10px 0;
+      color: #2c3e50;
+    }
+
+    #dishModal img,
+    #dishModal video {
+      width: 100%;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+
+    /* Like Button */
+    .like-btn {
+      background: none;
+      border: none;
+      color: #e74c3c;
+      font-size: 22px;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .like-btn:hover {
+      transform: scale(1.2);
+    }
+
+    .like-count {
+      color: #2c3e50;
+      font-weight: bold;
+      font-size: 14px;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+
+<h1>🥡 Chinese Cuisine</h1>
+<span class="menu-icon">☰ Menu</span>
+
+<!-- Dishes -->
+<div class="dishes">
+  <div class="dish" onclick="showRecipe('Kung Pao Chicken','A spicy Sichuan dish made with chicken, peanuts, and chili peppers.','https://via.placeholder.com/400x250?text=Kung+Pao+Chicken','https://www.w3schools.com/html/mov_bbb.mp4')">
+    <img src="https://via.placeholder.com/250x150?text=Kung+Pao+Chicken">
+    <h3>Kung Pao Chicken</h3>
+  </div>
+  <div class="dish" onclick="showRecipe('Mapo Tofu','Soft tofu cooked in a spicy chili and bean paste sauce.','https://via.placeholder.com/400x250?text=Mapo+Tofu','https://www.w3schools.com/html/mov_bbb.mp4')">
+    <img src="https://via.placeholder.com/250x150?text=Mapo+Tofu">
+    <h3>Mapo Tofu</h3>
+  </div>
+</div>
+
+<!-- Recipe Modal -->
+<div id="recipeModal" class="modal">
+  <div class="modal-content">
+    <span class="close-x" onclick="closeRecipe()">&times;</span>
+    <h2 id="recipeTitle"></h2>
+    <img id="recipeImg" src="" alt="Dish Image">
+    <p id="recipeDesc"></p>
+    <video id="recipeVideo" controls></video><br>
+    <button class="like-btn" id="likeBtn">❤️</button>
+    <p class="like-count" id="likeCount">Likes: 0</p>
+    
+  </div>
+</div>
+
+<script>
+// Menu modal
+function openMenu() {
+  document.getElementById("menuModal").style.display = "flex";
+}
+function closeMenu() {
+  document.getElementById("menuModal").style.display = "none";
+}
+
+// Store likes and views per dish
+let dishLikes = {};
+let dishViews = {};
+
+// Open dish modal
+function openDishModal(title, description, image, video) {
+  document.getElementById("dishTitle").textContent = title;
+  document.getElementById("dishDescription").textContent = description;
+  document.getElementById("dishImage").src = image;
+  document.getElementById("dishVideo").src = video;
+  document.getElementById("dishModal").style.display = "flex";
+
+  // Initialize likes and views if not exist
+  if (!dishLikes[title]) dishLikes[title] = 0;
+  if (!dishViews[title]) dishViews[title] = 0;
+
+  // Increment view count
+  dishViews[title]++;
+
+  // Update like and view displays
+  document.getElementById("likeCount").textContent = "Likes: " + dishLikes[title];
+  document.getElementById("viewCount").textContent = "Views: " + dishViews[title];
+
+  // Store current dish for like/share
+  document.getElementById("likeBtn").setAttribute("data-dish", title);
+  document.getElementById("shareBtn").setAttribute("data-dish", title);
+}
+
+// Close dish modal
+function closeDishModal() {
+  document.getElementById("dishModal").style.display = "none";
+  document.getElementById("dishVideo").pause();
+}
+
+// Like button logic
+function likeDish() {
+  const title = document.getElementById("likeBtn").getAttribute("data-dish");
+  dishLikes[title]++;
+  document.getElementById("likeCount").textContent = "Likes: " + dishLikes[title];
+}
+
+// Share button logic
+function shareDish() {
+  const title = document.getElementById("shareBtn").getAttribute("data-dish");
+  const description = document.getElementById("dishDescription").textContent;
+  const url = window.location.href;
+  const shareText = `${title}\n${description}\n${url}`;
+
+  if (navigator.share) {
+    // Native mobile share
+    navigator.share({
+      title: title,
+      text: description,
+      url: url
+    }).then(() => console.log("Shared successfully"))
+      .catch(err => console.log("Error sharing:", err));
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareText)
+      .then(() => alert("Dish info copied to clipboard!"))
+      .catch(() => alert("Failed to copy. Please copy manually."));
+  }
+}
+
+// Filter logic
+const radios = document.querySelectorAll('input[name="cuisine"]');
+const dishes = document.querySelectorAll('.dish');
+
+radios.forEach(radio => {
+  radio.addEventListener('change', () => {
+    const cuisine = radio.value;
+    dishes.forEach(dish => {
+      dish.style.display = cuisine === 'all' || dish.classList.contains(cuisine) ? 'block' : 'none';
+    });
+  });
+});
+</script>
+
+
+</body>
+</html>

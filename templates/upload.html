@@ -1,0 +1,259 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Upload Recipe</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+</head>
+<style>
+    /* General form container */
+.pro-form {
+  max-width: 480px;
+  margin: 30px auto;
+  padding: 30px 50px 30px 30px;
+  background: #f0f6f0; /* soft pastel background */
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+/* Form headings */
+.pro-form h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: bold;
+  color:hsl(144, 82.20%, 8.80%);
+}
+
+/* Rows */
+.pro-form .form-row {
+  margin-bottom: 16px;
+}
+
+/* Labels */
+.pro-form label {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+}
+
+/* Inputs, selects, textareas */
+.pro-form input,
+.pro-form select,
+.pro-form textarea {
+  width: 100%;
+  padding: 10px 10px 10px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.pro-form input:focus,
+.pro-form select:focus,
+.pro-form textarea:focus {
+  border-color: #6a3b82; /* purple accent */
+  box-shadow: 0 0 4px rgba(106,59,130,0.3);
+  outline: none;
+}
+
+/* Textarea resize */
+.pro-form textarea {
+  resize: vertical;
+}
+
+/* Actions (button row) */
+.pro-form .form-actions {
+  text-align: center;
+  margin-top: 20px;
+}
+
+/* Buttons */
+.pro-form .btn {
+  background-color: #6a3b82; /* purple button */
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: bold;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.pro-form .btn:hover {
+  background-color: #542f66; /* darker purple */
+  transform: translateY(-1px);
+}
+
+/* Hide utility */
+.hidden {
+  display: none;
+}
+
+</style>
+<body>
+    <div class="background-slider">
+        <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+        <img src= "{% static 'image/p2.jpg' %}" class="bg-slide">
+        <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+        <div class="background-overlay"></div>
+    </div>
+ <header>
+  <nav class="navbar">
+    <a href="{% url 'index' %}" class="logo-link">
+      <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+    </a>
+    <ul>
+        <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+        <li><a href="{% url 'upload' %}"><i class="fas fa-upload"></i> Upload</a></li>
+        {% if user_id %}
+            <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        {% endif %}
+    </ul>
+  </nav>
+</header>
+
+
+  <main>
+    <section class="pro-form">
+      <h2>Choose Cuisine</h2>
+      {% if messages %}
+        {% for message in messages %}
+          <!--p style="margin:6px 0; color: {% if message.tags == 'error' %}#b00020{% else %}#0a500d{% endif %};">{{ message }}</p-->
+        {% endfor %}
+      {% endif %}
+      <div class="form-row">
+        <label for="cuisine">Cuisine</label>
+        <select id="cuisine">
+          <option value="" selected disabled>Select a cuisine</option>
+          <option>Indian</option>
+          <option>Chinese</option>
+          <option>Japanese</option>
+          <option>Korean</option>
+          <option>Thai</option>
+          <option>Italian</option>
+        </select>
+      </div>
+    </section>
+    <section class="pro-form hidden">
+        <h2>Choose Sub-Cuisine</h2>
+        <div class="form-row hidden" id="subcuisine-row">
+          <label for="subcuisine">Sub-cuisine</label>
+          <select id="subcuisine"></select>
+        </div>
+    </section>
+
+    <section id="upload-section" class="pro-form hidden">
+      <h2>Upload Recipe</h2>
+      <form method="POST" enctype="multipart/form-data" action="{% url 'upload' %}">
+        {% csrf_token %}
+        <input type="hidden" id="cuisineField" name="cuisine" />
+        <input type="hidden" id="subcuisineField" name="subcuisine" />
+        <div class="form-row">
+          <label for="title">Title</label>
+          <input type="text" id="title" name="title" required />
+        </div>
+        <div class="form-row">
+          <label for="region">Region</label>
+          <input type="text" id="region" name="region" />
+        </div>
+        <div class="form-row">
+          <label for="description">Short Description</label>
+          <input type="text" id="description" name="description" />
+        </div>
+        <div class="form-row">
+          <label for="photo">Photo</label>
+          <input type="file" id="photo" name="photo" accept="image/*" />
+        </div>
+        <div class="form-row">
+          <label for="video">Video</label>
+          <input type="file" id="video" name="video" accept="video/*" />
+        </div>
+        <div class="form-row">
+          <label for="ingredients">Ingredients</label>
+          <textarea id="ingredients" name="ingredients" rows="4" required></textarea>
+        </div>
+        <div class="form-row">
+          <label for="instructions">Instructions</label>
+          <textarea id="instructions" name="instructions" rows="5" required></textarea>
+        </div>
+        <div class="form-actions">
+        
+          <button type="submit" class="btn btn-primary">Submit Recipe</button>
+        </div>
+      </form>
+        {% if messages %}
+         {% for message in messages %}
+           <p style="color:green">{{ message }}</p>
+        {% endfor %}
+          {% endif %}
+    </section>
+  </main>
+
+  {% include 'partials/footer.html' %}
+<script>
+  const cuisine = document.getElementById('cuisine');
+const subcuisine = document.getElementById('subcuisine');
+const subRow = document.getElementById('subcuisine-row');
+const subSection = document.querySelector('section.pro-form.hidden'); // the whole section
+const uploadSection = document.getElementById('upload-section');
+
+const options = {
+  'Indian': ['Punjabi', 'Gujarati', 'South Indian', 'Rajasthani', 'Bengali','Sindhi'],
+  'Chinese': ['Sichuan', 'Cantonese', 'Hunan'],
+  'Japanese': ['Kanto', 'Kansai', 'Hokkaido'],
+  'Korean': ['Seoul', 'Jeolla', 'Gyeongsang'],
+  'Thai': ['Northern', 'Central', 'Isan', 'Southern'],
+  'Italian': ['Sicilian', 'Tuscan', 'Neapolitan']
+};
+
+// When cuisine is selected
+cuisine.addEventListener('change', () => {
+  const val = cuisine.value;
+  subcuisine.innerHTML = '';
+  
+  if (options[val]) {
+    // show the whole sub-cuisine section
+    subSection.classList.remove('hidden');
+
+    // load sub-cuisine dropdown
+    subcuisine.insertAdjacentHTML('beforeend', '<option value="" selected disabled>Select a sub-cuisine</option>');
+    options[val].forEach(o => {
+      subcuisine.insertAdjacentHTML('beforeend', `<option>${o}</option>`);
+    });
+
+    // show the dropdown row
+    subRow.classList.remove('hidden');
+
+    // set hidden field for cuisine
+    document.getElementById('cuisineField').value = val;
+  } else {
+    subSection.classList.add('hidden');  // hide again if no valid cuisine
+    subRow.classList.add('hidden');
+    uploadSection.classList.add('hidden');
+  }
+});
+
+// When sub-cuisine is selected
+subcuisine.addEventListener('change', () => {
+  if (subcuisine.value) {
+    document.getElementById('subcuisineField').value = subcuisine.value;
+    uploadSection.classList.remove('hidden');
+  }
+});
+    </script>
+</body>
+</html>
+

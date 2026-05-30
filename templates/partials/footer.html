@@ -1,0 +1,213 @@
+{% load static %}
+
+<style>
+
+/* ===== FOOTER ===== */
+.footer{
+    background: linear-gradient(to right, #232526, #414345);
+    color: white;
+    padding: 60px 20px 20px;
+    margin-top: 50px;
+    font-family: Arial, sans-serif;
+}
+
+/* Container */
+.footer-container{
+    max-width: 1200px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+/* ===== Logo Section ===== */
+.footer-logo h2{
+    color: #28c76f;
+    font-size: 2rem;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.footer-logo p{
+    color: #d4d4d4;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+/* ===== Footer Titles ===== */
+.footer-links h4,
+.footer-social h4{
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    color: #ffffff;
+}
+
+/* ===== Links ===== */
+.footer-links ul{
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links ul li{
+    margin-bottom: 15px;
+}
+
+.footer-links ul li a{
+    color: #f1f1f1;
+    text-decoration: none;
+    font-size: 1rem;
+    transition: 0.3s ease;
+}
+
+.footer-links ul li a i{
+    margin-right: 10px;
+}
+
+.footer-links ul li a:hover{
+    color: #28c76f;
+    padding-left: 5px;
+}
+
+/* ===== Social Icons ===== */
+.footer-social a{
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 45px;
+    height: 45px;
+    margin-right: 12px;
+    border-radius: 50%;
+    background: #2d2d2d;
+    color: white;
+    font-size: 1.2rem;
+    transition: 0.3s ease;
+    text-decoration: none;
+}
+
+.footer-social a:hover{
+    background: #28c76f;
+    transform: translateY(-5px);
+}
+
+/* ===== Footer Bottom ===== */
+.footer-bottom{
+    border-top: 1px solid rgba(255,255,255,0.2);
+    margin-top: 40px;
+    padding-top: 20px;
+    text-align: center;
+}
+
+.footer-bottom p{
+    color: #cccccc;
+    font-size: 0.95rem;
+}
+
+/* ===== Responsive ===== */
+@media(max-width:768px){
+
+    .footer-container{
+        flex-direction: column;
+        text-align: center;
+        align-items: center;
+    }
+
+    .footer-links ul{
+        padding: 0;
+    }
+
+    .footer-social{
+        margin-top: 20px;
+    }
+
+    .footer-logo h2{
+        font-size: 1.7rem;
+    }
+
+    .footer-links h4,
+    .footer-social h4{
+        font-size: 1.2rem;
+    }
+}
+
+</style>
+
+<footer class="footer">
+
+    <div class="footer-container">
+
+        <!-- Logo Section -->
+        <div class="footer-logo">
+            <h2>
+                <i class="fa-solid fa-utensils"></i>
+                MoM's Kitchen
+            </h2>
+
+            <p>
+                Delicious food made with love ❤️
+            </p>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="footer-links">
+
+            <h4>Quick Links</h4>
+
+            <ul>
+                <li>
+                    <a href="{% url 'index' %}">
+                        <i class="fa-solid fa-house"></i>
+                        Home
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'about' %}">
+                        <i class="fa-solid fa-circle-info"></i>
+                        About
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'contact' %}">
+                        <i class="fa-solid fa-envelope"></i>
+                        Contact
+                    </a>
+                </li>
+
+                <li>
+                    <a href="{% url 'registration' %}">
+                        <i class="fa-solid fa-user-plus"></i>
+                        Registration
+                    </a>
+                </li>
+            </ul>
+
+        </div>
+
+        <!-- Social Media -->
+        <div class="footer-social">
+
+            <h4>Follow Us</h4>
+
+            <a href="#"><i class="fa-brands fa-facebook-f"></i></a>
+
+            <a href="#"><i class="fa-brands fa-instagram"></i></a>
+
+            <a href="#"><i class="fa-brands fa-twitter"></i></a>
+
+            <a href="#"><i class="fa-brands fa-youtube"></i></a>
+
+        </div>
+
+    </div>
+
+    <!-- Footer Bottom -->
+    <div class="footer-bottom">
+        <p>
+            © 2025 Mom's Kitchen. All Rights Reserved.
+        </p>
+    </div>
+
+</footer>

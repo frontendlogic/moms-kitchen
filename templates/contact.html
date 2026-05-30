@@ -1,0 +1,125 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Food Website - Contact</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<style>
+    /* Background slider */
+.background-slider {
+ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.3s ease-in-out;
+}
+
+/* Background overlay - dedicated div for better control */
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(82, 82, 81, 0.5); /* Semi-transparent dark overlay */
+    z-index: 1; /* Above background images but below content */
+    pointer-events: none; /* Allow clicks to pass through */
+}
+.bg-slide.active {
+      background-size: cover;
+    background-position: center;
+     background-color: rgb(82, 82, 81);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /* Use the filter property to adjust brightness */
+    filter: brightness(1.1); /* 1.0 is original, > 1.0 is brighter */
+    opacity: 1;
+}
+.contact-form-container
+{
+    width: 558px;
+}
+
+/*ICons */
+ul li a i {
+  font-size: 18px;
+    margin-right: 6px;   /* space between icon and text */
+}
+ul li a.active i {
+  color: #0f361f;      /* highlight active icon */
+}
+</style>
+<body>
+    <div class="background-slider">
+    <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+    <img src= "{% static 'image/p2.jpg' %}" class="bg-slide  ">
+    <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+    <div class="background-overlay"></div>
+</div>
+    <header>
+       <nav class="navbar">
+        <a href="{% url 'index' %}" class="logo-link">
+                <img src="{% static 'image/Logo.png' %}" alt="Food Website Logo" class="logo">
+            </a>
+                  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        <ul>
+            <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"> <i class="fa-solid fa-house"></i> Home</a></li>
+            <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}"><i class="fas fa-envelope"></i> Contact</a></li>
+            <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+            {% if user_id %}
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            {% else %}
+                <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i> Register</a></li>
+                <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+            {% endif %}
+    </nav>
+    </header>
+
+    <main>
+        <section class="contact-form-container">
+            <h1>Contact Us</h1>
+            <form action="#" method="post" class="contact-form">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" required>
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+                </div>
+                <div class="form-group">
+                    <label for="message">Message:</label>
+                    <textarea id="message" name="message" rows="5" required></textarea>
+                </div>
+                <button type="submit" class="submit-button">Send Message</button>
+            </form>
+        </section>
+    </main>
+
+    
+ <!--Footer -->
+{% include 'partials/footer.html' %}
+
+    <script src="{% static 'js/script.js' %}"></script>
+</body>
+</html>

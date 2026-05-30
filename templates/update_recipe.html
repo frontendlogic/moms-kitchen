@@ -1,0 +1,236 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Update Recipe</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    .form-container {
+      max-width: 800px;
+      margin: 30px auto;
+      padding: 30px;
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 15px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: bold;
+      color: #333;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: border-color 0.3s;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: #27ae60;
+    }
+
+    .btn-submit {
+      background-color: #27ae60;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+    }
+
+    .btn-submit:hover {
+      background-color: #229954;
+    }
+
+    .btn-cancel {
+      background-color: #95a5a6;
+      color: white;
+      padding: 12px 30px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      font-weight: bold;
+      transition: background-color 0.3s;
+      text-decoration: none;
+      display: inline-block;
+      margin-left: 10px;
+    }
+
+    .btn-cancel:hover {
+      background-color: #7f8c8d;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-header h2 {
+      color: #27ae60;
+      margin-bottom: 10px;
+    }
+
+    .messages {
+      margin-bottom: 20px;
+    }
+
+    .messages p {
+      padding: 10px;
+      border-radius: 5px;
+      text-align: center;
+    }
+
+    .messages .success {
+      background-color: #d4edda;
+      color: #155724;
+      border: 1px solid #c3e6cb;
+    }
+
+    .messages .error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border: 1px solid #f5c6cb;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-slider">
+      <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+      <img src= "{% static 'image/p2.jpg' %}" class="bg-slide">
+      <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+      <div class="background-overlay"></div>
+  </div>
+
+  <header>
+    <nav class="navbar">
+      <a href="{% url 'index' %}" class="logo-link">
+        <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+      </a>
+      <ul>
+        <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+        <li><a href="{% url 'upload' %}"><i class="fas fa-upload"></i> Upload</a></li>
+        {% if user_id %}
+            <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <div class="form-container">
+      <div class="form-header">
+        <h2><i class="fas fa-edit"></i> Update Recipe</h2>
+        <p>Modify your recipe details below</p>
+      </div>
+
+      <!-- Django Messages -->
+      <div class="messages">
+        {% if messages %}
+          {% for message in messages %}
+            <p class="{% if message.tags == 'success' %}success{% else %}error{% endif %}">{{ message }}</p>
+          {% endfor %}
+        {% endif %}
+      </div>
+
+      <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <label for="cuisine">Cuisine Type:</label>
+          <select name="cuisine" id="cuisine" class="form-control" required>
+            <option value="">Select Cuisine</option>
+            <option value="Indian" {% if recipe.cuisine == 'Indian' %}selected{% endif %}>Indian</option>
+            <option value="Chinese" {% if recipe.cuisine == 'Chinese' %}selected{% endif %}>Chinese</option>
+            <option value="Italian" {% if recipe.cuisine == 'Italian' %}selected{% endif %}>Italian</option>
+            <option value="Japanese" {% if recipe.cuisine == 'Japanese' %}selected{% endif %}>Japanese</option>
+            <option value="Korean" {% if recipe.cuisine == 'Korean' %}selected{% endif %}>Korean</option>
+            <option value="Thai" {% if recipe.cuisine == 'Thai' %}selected{% endif %}>Thai</option>
+            <option value="Mexican" {% if recipe.cuisine == 'Mexican' %}selected{% endif %}>Mexican</option>
+            <option value="American" {% if recipe.cuisine == 'American' %}selected{% endif %}>American</option>
+            <option value="French" {% if recipe.cuisine == 'French' %}selected{% endif %}>French</option>
+            <option value="Other" {% if recipe.cuisine == 'Other' %}selected{% endif %}>Other</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="subcuisine">Sub-Cuisine:</label>
+          <input type="text" name="subcuisine" id="subcuisine" class="form-control" value="{{ recipe.subcuisine }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="title">Recipe Title:</label>
+          <input type="text" name="title" id="title" class="form-control" value="{{ recipe.title }}" required>
+        </div>
+
+        <div class="form-group">
+          <label for="region">Region (Optional):</label>
+          <input type="text" name="region" id="region" class="form-control" value="{{ recipe.region }}">
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description (Optional):</label>
+          <textarea name="description" id="description" class="form-control" rows="3">{{ recipe.description }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="ingredients">Ingredients:</label>
+          <textarea name="ingredients" id="ingredients" class="form-control" rows="5" required>{{ recipe.ingredients }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="instructions">Instructions:</label>
+          <textarea name="instructions" id="instructions" class="form-control" rows="8" required>{{ recipe.instructions }}</textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="photo">Recipe Photo (Optional):</label>
+          <input type="file" name="photo" id="photo" class="form-control" accept="image/*">
+          {% if recipe.photo %}
+            <p><strong>Current photo:</strong> {{ recipe.photo.name }}</p>
+          {% endif %}
+        </div>
+
+        <div class="form-group">
+          <label for="video">Recipe Video (Optional):</label>
+          <input type="file" name="video" id="video" class="form-control" accept="video/*">
+          {% if recipe.video %}
+            <p><strong>Current video:</strong> {{ recipe.video.name }}</p>
+          {% endif %}
+        </div>
+
+        <div style="text-align: center; margin-top: 30px;">
+          <button type="submit" class="btn-submit">
+            <i class="fas fa-save"></i> Update Recipe
+          </button>
+          <a href="{% url 'user_dashboard' %}" class="btn-cancel">
+            <i class="fas fa-times"></i> Cancel
+          </a>
+        </div>
+      </form>
+    </div>
+  </main>
+
+  {% include 'partials/footer.html' %}
+</body>
+</html>

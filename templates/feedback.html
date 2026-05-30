@@ -1,0 +1,233 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback</title>
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<style>
+    /* Background slider */
+.background-slider {
+ 
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1.3s ease-in-out;
+}
+
+/* Background overlay - dedicated div for better control */
+.background-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(82, 82, 81, 0.5); /* Semi-transparent dark overlay */
+    z-index: 1; /* Above background images but below content */
+    pointer-events: none; /* Allow clicks to pass through */
+}
+.bg-slide.active {
+      background-size: cover;
+    background-position: center;
+     background-color: rgb(82, 82, 81);
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    /* Use the filter property to adjust brightness */
+    filter: brightness(1.1); /* 1.0 is original, > 1.0 is brighter */
+    opacity: 1;
+}
+.contact-form-container
+{
+    width: 558px;
+}
+
+/*ICons */
+ul li a i {
+  font-size: 18px;
+    margin-right: 6px;   /* space between icon and text */
+}
+ul li a.active i {
+  color: #0f361f;      /* highlight active icon */
+}
+.pro-form {
+    max-width: 420px;
+    margin: 50px auto;
+    padding: 30px 50px 30px 30px;
+    background: #f0f6f0; /* light greenish like your other form */
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+    text-align: left;
+  }
+  
+  .pro-form h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 22px;
+    font-weight: bold;
+    color:hsl(116, 88.70%, 10.40%);
+  }
+  
+  .pro-form .form-row {
+    margin-bottom: 15px;
+  }
+  
+  .pro-form label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    color: #333;
+  }
+  
+  .pro-form input,
+  .pro-form textarea {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  
+  .pro-form input:focus,
+  .pro-form textarea:focus {
+    border-color: #6a3b82; /* purple accent */
+    outline: none;
+  }
+  
+  .pro-form textarea {
+    resize: vertical;
+  }
+  
+  .pro-form .form-actions {
+    text-align: center;
+  }
+  
+  .pro-form .btn {
+    background-color: #6a3b82; /* purple button */
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .pro-form .btn:hover {
+    background-color: #542f66; /* darker purple on hover */
+  }
+  .star-rating {
+    display: flex;
+    flex-direction: row-reverse; /* shows 5 → 1 from left to right */
+    justify-content: center;
+  }
+  
+  .star-rating input {
+    display: none; /* hide radio buttons */
+  }
+  
+  .star-rating label {
+    color: #ccc; 
+    font-size: 24px;
+    padding: 5px;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .star-rating label:hover,
+  .star-rating label:hover ~ label,
+  .star-rating input:checked ~ label {
+    color: #f4b400; /* gold color for stars */
+  }
+  
+  
+</style>
+<body>
+    <div class="background-slider">
+        <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+        <img src= "{% static 'image/p2.jpg' %}" class="bg-slide">
+        <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+        <div class="background-overlay"></div>
+    </div>
+  <header>
+    <nav class="navbar">
+      <a href="{% url 'index' %}" class="logo-link">
+        <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+      </a>
+      <ul>
+        <li><a href="{% url 'index' %}" class="{% if request.path == '/' %}active{% endif %}"><i class="fa-solid fa-house"></i> Home</a></li>
+        <li><a href="{% url 'about' %}" class="{% if request.path == '/about/' %}active{% endif %}"><i class="fas fa-info-circle"></i> About</a></li>
+        <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+        {% if user_id %}
+            <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+            <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+        {% else %}
+            <li><a href="{% url 'registration' %}" class="{% if request.path == '/registration/' %}active{% endif %}"><i class="fas fa-user-plus"></i> Register</a></li>
+            <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+        {% endif %}
+      </ul>
+    </nav>
+  </header>
+
+  <main>
+    <section class="pro-form">
+      <h2>We value your feedback</h2>
+      <form method="post">
+        {% csrf_token %}
+        <div class="form-row">
+          <label for="name">Your Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="email">Email</label>
+          <input type="text" id="email" name="email" required>
+        </div>
+        <div class="form-row">
+          <label for="subject">Subject</label>
+          <input type="text" id="subject" name="subject" required>
+        </div>
+        <div class="form-row">
+          <label for="message">Message</label>
+          <textarea id="message" name="message" rows="5" required></textarea>
+        </div>
+        <div class="form-row">
+            <label for="rating">Your Rating</label>
+            <div class="star-rating">
+              <input type="radio" id="star5" name="rating" value="5"><label for="star5" title="Excellent"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star4" name="rating" value="4"><label for="star4" title="Very Good"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star3" name="rating" value="3"><label for="star3" title="Good"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star2" name="rating" value="2"><label for="star2" title="Fair"><i class="fas fa-star"></i></label>
+              <input type="radio" id="star1" name="rating" value="1"><label for="star1" title="Poor"><i class="fas fa-star"></i></label>
+            </div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Send Feedback</button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  {% include 'partials/footer.html' %}
+</body>
+</html>
+

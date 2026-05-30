@@ -1,0 +1,34 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cuisines</title>
+    <style>
+        body { font-family: Arial; background: #fafafa; }
+        .card {
+            background: white;
+            margin: 20px auto;
+            padding: 20px;
+            max-width: 600px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        video, img { width: 100%; border-radius: 8px; margin-top: 10px; }
+        p { margin-top: 15px; color: #333; }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center;">Uploaded Cuisines</h1>
+
+    {% for upload in uploads %}
+    <div class="card">
+        <video controls>
+            <source src="{{ upload.video.url }}" type="video/mp4">
+        </video>
+        <img src="{{ upload.photo1.url }}" alt="Photo 1">
+        <img src="{{ upload.photo2.url }}" alt="Photo 2">
+        <p>{{ upload.description }}</p>
+    </div>
+    {% endfor %}
+</body>
+</html>

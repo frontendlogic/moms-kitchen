@@ -1,0 +1,617 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recipe List - MoM's Kitchen</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .recipe-list-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .filter-section {
+            background: #f0f6f0;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .filter-section h2 {
+            color: #0a500d;
+            margin-bottom: 15px;
+            font-size: 24px;
+        }
+
+        .filter-dropdown {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-dropdown label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .filter-dropdown select {
+            padding: 10px 15px;
+            border: 2px solid #0a500d;
+            border-radius: 8px;
+            font-size: 16px;
+            background: white;
+            cursor: pointer;
+            min-width: 200px;
+        }
+
+        .filter-dropdown select:focus {
+            outline: none;
+            border-color: #27ae60;
+        }
+
+        .clear-filter-btn {
+            padding: 10px 20px;
+            background: #c0392b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .clear-filter-btn:hover {
+            background: #8e2620;
+        }
+
+        .recipes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .recipe-card {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+
+        .recipe-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .recipe-card-content {
+            padding: 20px;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .recipe-title {
+            font-size: 20px;
+            font-weight: bold;
+            color: #0a500d;
+            margin-bottom: 10px;
+        }
+
+        .recipe-subcuisine {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 10px;
+            text-transform: capitalize;
+        }
+
+        .recipe-description {
+            color: #555;
+            font-size: 14px;
+            margin-bottom: 15px;
+            flex: 1;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .recipe-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+        .like-btn {
+            background: #f8f9fa;
+            color: #c0392b;
+            border: 2px solid #c0392b;
+        }
+
+        .like-btn:hover {
+            background: #c0392b;
+            color: white;
+        }
+
+        .like-btn.liked {
+            background: #c0392b;
+            color: white;
+        }
+
+        .view-btn {
+            background: #27ae60;
+            color: white;
+        }
+
+        .view-btn:hover {
+            background: #229954;
+        }
+
+        .share-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .share-btn:hover {
+            background: #2980b9;
+        }
+
+        .like-count {
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .no-recipes {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .no-recipes h3 {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .recipe-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #888;
+        }
+
+        .recipe-author {
+            font-weight: bold;
+            color: #0a500d;
+        }
+
+        .reward-popup {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.55);
+            display: grid;
+            place-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            z-index: 9999;
+        }
+
+        .reward-popup.is-visible {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .reward-popup__content {
+            background: #ffffff;
+            border-radius: 26px;
+            padding: 40px 46px;
+            max-width: 520px;
+            width: 90vw;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 28px 60px rgba(44, 62, 80, 0.28);
+        }
+
+        .reward-popup__content h3 {
+            font-size: 2rem;
+            color: #442c4b;
+            margin-bottom: 12px;
+        }
+
+        .reward-popup__message {
+            color: #4a4f4d;
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+        }
+
+        .reward-popup__timer {
+            color: #2d6a4f;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .reward-balloons {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .reward-balloon {
+            position: absolute;
+            bottom: -80px;
+            width: 38px;
+            height: 50px;
+            border-radius: 50% 50% 45% 45%;
+            background: linear-gradient(135deg, rgba(115, 78, 124, 0.85), rgba(153, 99, 170, 0.95));
+            animation: floatBalloon 6s ease-in-out infinite;
+        }
+
+        .reward-balloon::after {
+            content: '';
+            position: absolute;
+            width: 6px;
+            height: 18px;
+            background: rgba(0, 0, 0, 0.12);
+            bottom: -18px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-radius: 6px;
+        }
+
+        .reward-balloon:nth-child(2) {
+            left: 18%;
+            animation-delay: -1.2s;
+            background: linear-gradient(135deg, rgba(45, 106, 79, 0.9), rgba(109, 194, 140, 0.95));
+        }
+
+        .reward-balloon:nth-child(3) {
+            left: 50%;
+            animation-delay: -2s;
+        }
+
+        .reward-balloon:nth-child(4) {
+            left: 78%;
+            animation-delay: -3s;
+            background: linear-gradient(135deg, rgba(255, 149, 108, 0.9), rgba(255, 206, 150, 0.95));
+        }
+
+        @keyframes floatBalloon {
+            0% { transform: translateY(0) scale(1); opacity: 0; }
+            10% { opacity: 1; }
+            50% { transform: translateY(-120px) scale(1.04); }
+            100% { transform: translateY(-260px) scale(0.95); opacity: 0; }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-slider">
+        <img src="{% static 'image/p1.jpg' %}" class="bg-slide active">
+        <img src="{% static 'image/p2.jpg' %}" class="bg-slide">
+        <img src="{% static 'image/bp3.jpg' %}" class="bg-slide">
+        <div class="background-overlay"></div>
+    </div>
+
+    <header>
+        <nav class="navbar">
+            <a href="{% url 'index' %}" class="logo-link">
+                <img src="{% static 'image/logo.png' %}" alt="Food Website Logo" class="logo">
+            </a>
+            <ul>
+                <li><a href="{% url 'index' %}"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="{% url 'recipe_list' %}"><i class="fas fa-list"></i> All Recipes</a></li>
+                {% if user_id %}
+                    <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i> {{ user_name }}</a></li>
+                    <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                {% else %}
+                    <li><a href="{% url 'login_view' %}"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
+
+    <main class="recipe-list-container">
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h2><i class="fas fa-filter"></i> Filter by Sub-Cuisine</h2>
+            <div class="filter-dropdown">
+                <label for="subcuisine-filter">Select Sub-Cuisine:</label>
+                <select id="subcuisine-filter" onchange="filterBySubcuisine()">
+                    <option value="">All Sub-Cuisines</option>
+                    {% for subcuisine in subcuisines %}
+                        <option value="{{ subcuisine }}" {% if selected_subcuisine == subcuisine %}selected{% endif %}>
+                            {{ subcuisine }}
+                        </option>
+                    {% endfor %}
+                </select>
+                {% if selected_subcuisine %}
+                    <a href="{% url 'recipe_list' %}" class="clear-filter-btn">
+                        <i class="fas fa-times"></i> Clear Filter
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Recipes Grid -->
+        <div class="recipes-grid">
+            {% for recipe in recipes %}
+                <div class="recipe-card" data-recipe-id="{{ recipe.id }}">
+                    {% if recipe.photo %}
+                        <img src="{{ recipe.photo.url }}" alt="{{ recipe.title }}" class="recipe-image">
+                    {% else %}
+                        <div class="recipe-image" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; color: white; font-size: 48px;">
+                            <i class="fas fa-utensils"></i>
+                        </div>
+                    {% endif %}
+                    
+                    <div class="recipe-card-content">
+                        <div class="recipe-meta">
+                            <span class="recipe-author">By {{ recipe.user.user_name }}</span>
+                            <span>{{ recipe.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        
+                        <h3 class="recipe-title">{{ recipe.title }}</h3>
+                        <p class="recipe-subcuisine">
+                            <i class="fas fa-utensils"></i> {{ recipe.subcuisine }}
+                        </p>
+                        
+                        {% if recipe.description %}
+                            <p class="recipe-description">{{ recipe.description|truncatewords:20 }}</p>
+                        {% else %}
+                            <p class="recipe-description">No description available.</p>
+                        {% endif %}
+                        
+                        <div class="recipe-actions">
+                            <button class="action-btn like-btn {% if recipe.is_liked %}liked{% endif %}" 
+                                    data-recipe-id="{{ recipe.id }}"
+                                    data-action="like"
+                                    id="like-btn-{{ recipe.id }}">
+                                <i class="fas fa-heart"></i>
+                                <span class="like-text">{% if recipe.is_liked %}Liked{% else %}Like{% endif %}</span>
+                                <span class="like-count" id="like-count-{{ recipe.id }}">{{ recipe.like_count }}</span>
+                            </button>
+                            
+                            <button class="action-btn view-btn" data-recipe-id="{{ recipe.id }}" data-action="view">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            
+                            <button class="action-btn share-btn" data-recipe-id="{{ recipe.id }}" data-recipe-title="{{ recipe.title|escapejs }}" data-action="share">
+                                <i class="fas fa-share-alt"></i> Share
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            {% empty %}
+                <div class="no-recipes">
+                    <h3>No recipes found</h3>
+                    <p>{% if selected_subcuisine %}No recipes available for "{{ selected_subcuisine }}" subcuisine.{% else %}No recipes available yet.{% endif %}</p>
+                    {% if user_id %}
+                        <a href="{% url 'upload' %}" class="action-btn view-btn" style="margin-top: 20px; display: inline-block;">
+                            <i class="fas fa-upload"></i> Upload Recipe
+                        </a>
+                    {% endif %}
+                </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    {% include 'partials/footer.html' %}
+
+    <div id="reward-popup" class="reward-popup" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="reward-popup__content">
+            <div class="reward-balloons">
+                <span class="reward-balloon" style="left:5%;"></span>
+                <span class="reward-balloon"></span>
+                <span class="reward-balloon"></span>
+                <span class="reward-balloon"></span>
+            </div>
+            <h3>Congratulations!</h3>
+            <p class="reward-popup__message">You have won a reward!</p>
+            <p class="reward-popup__timer">Redirecting in <span id="reward-countdown">20</span> seconds...</p>
+        </div>
+    </div>
+
+    <script>
+        // CSRF Token for AJAX requests
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+        const csrftoken = getCookie('csrftoken');
+
+        // Filter by Subcuisine
+        function filterBySubcuisine() {
+            const select = document.getElementById('subcuisine-filter');
+            const subcuisine = select.value;
+            if (subcuisine) {
+                window.location.href = `{% url 'recipe_list' %}?subcuisine=${encodeURIComponent(subcuisine)}`;
+            } else {
+                window.location.href = '{% url "recipe_list" %}';
+            }
+        }
+
+        // Event delegation for recipe actions
+        document.addEventListener('click', function(e) {
+            const action = e.target.closest('[data-action]');
+            if (!action) return;
+            
+            const recipeId = action.getAttribute('data-recipe-id');
+            const actionType = action.getAttribute('data-action');
+            
+            if (actionType === 'like') {
+                toggleLike(recipeId);
+            } else if (actionType === 'view') {
+                viewRecipe(recipeId);
+            } else if (actionType === 'share') {
+                const recipeTitle = action.getAttribute('data-recipe-title');
+                shareRecipe(recipeId, recipeTitle);
+            }
+        });
+
+        // Toggle Like
+        function toggleLike(recipeId) {
+            const likeBtn = document.getElementById(`like-btn-${recipeId}`);
+            const likeCountEl = document.getElementById(`like-count-${recipeId}`);
+            const likeText = likeBtn.querySelector('.like-text');
+            
+            // Disable button during request
+            likeBtn.disabled = true;
+            likeBtn.style.opacity = '0.6';
+
+            fetch(`/recipes/${recipeId}/toggle-like/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                credentials: 'same-origin'
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Update like count
+                    likeCountEl.textContent = data.like_count;
+                    
+                    // Update button state
+                    if (data.is_liked) {
+                        likeBtn.classList.add('liked');
+                        likeText.textContent = 'Liked';
+                    } else {
+                        likeBtn.classList.remove('liked');
+                        likeText.textContent = 'Like';
+                    }
+
+                    if (data.reward_unlocked && data.reward_for_current_user && data.reward_redirect_url) {
+                        showRewardPopup(data.reward_recipe_title, data.reward_redirect_url);
+                    }
+                } else {
+                    if (data.message && data.message.includes('login')) {
+                        alert('Please login to like recipes');
+                        window.location.href = '{% url "login_view" %}';
+                    } else {
+                        alert('Error: ' + (data.message || 'An error occurred'));
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred. Please try again.');
+            })
+            .finally(() => {
+                likeBtn.disabled = false;
+                likeBtn.style.opacity = '1';
+            });
+        }
+
+        // View Recipe - navigate to detail page
+        function viewRecipe(recipeId) {
+            window.location.href = `/recipes/${recipeId}/`;
+        }
+
+        // Share Recipe
+        function shareRecipe(recipeId, recipeTitle) {
+            const url = window.location.origin + `/recipes/${recipeId}/`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: recipeTitle,
+                    text: `Check out this recipe: ${recipeTitle}`,
+                    url: url
+                }).catch(err => console.log('Error sharing', err));
+            } else {
+                // Fallback: Copy to clipboard
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Recipe link copied to clipboard!');
+                }).catch(err => {
+                    // Fallback: Show URL in prompt
+                    prompt('Copy this link:', url);
+                });
+            }
+        }
+
+        const rewardPopupEl = document.getElementById('reward-popup');
+        const rewardMessageEl = rewardPopupEl.querySelector('.reward-popup__message');
+        const rewardCountdownEl = document.getElementById('reward-countdown');
+        let rewardRedirectTimeout = null;
+        let rewardCountdownInterval = null;
+
+        function showRewardPopup(recipeTitle, redirectUrl) {
+            rewardMessageEl.textContent = `You have won a reward for "${recipeTitle}"!`;
+            let secondsRemaining = 20;
+            rewardCountdownEl.textContent = secondsRemaining;
+            rewardPopupEl.setAttribute('aria-hidden', 'false');
+            rewardPopupEl.classList.add('is-visible');
+
+            if (rewardRedirectTimeout) {
+                clearTimeout(rewardRedirectTimeout);
+            }
+            if (rewardCountdownInterval) {
+                clearInterval(rewardCountdownInterval);
+            }
+
+            rewardCountdownInterval = setInterval(() => {
+                secondsRemaining -= 1;
+                if (secondsRemaining <= 0) {
+                    clearInterval(rewardCountdownInterval);
+                    return;
+                }
+                rewardCountdownEl.textContent = secondsRemaining;
+            }, 1000);
+
+            rewardRedirectTimeout = setTimeout(() => {
+                rewardPopupEl.classList.remove('is-visible');
+                rewardPopupEl.setAttribute('aria-hidden', 'true');
+                window.location.href = redirectUrl;
+            }, 20000);
+        }
+    </script>
+</body>
+</html>
+
